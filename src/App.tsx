@@ -1,6 +1,6 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import logo from "./logo.svg";
+import "./App.css";
 
 function App() {
   return (
@@ -19,6 +19,11 @@ function App() {
           Learn React
         </a>
       </header>
+
+      {/* <div className="min-w-full min-h-full flex flex-row">
+        <SideBar />
+        <div className="grow bg-[#EEEFF5] min-h-full">{children}</div>
+      </div> */}
     </div>
   );
 }
