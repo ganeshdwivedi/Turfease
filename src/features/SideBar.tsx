@@ -3,13 +3,16 @@ import { HiOutlineCalendar } from "react-icons/hi2";
 import { FaFileInvoiceDollar } from "react-icons/fa";
 import { IoPersonSharp } from "react-icons/io5";
 import { IoSettingsSharp } from "react-icons/io5";
+import { GoSignOut } from "react-icons/go";
 import { Link, useLocation } from "react-router-dom";
+import { PiCourtBasketballFill } from "react-icons/pi";
 
 const SideBar = () => {
   const { pathname } = useLocation();
 
   return (
     <div className="bg-[#424B96] w-[250px] min-h-[100vh] flex flex-col items-center text-white font-regular">
+      {/* <img src="Images/Logo.png" className="w-40 h-40" alt="logo" /> */}
       <div className="flex flex-col my-5 items-center">
         <img
           className="rounded-[50%] w-32 h-32 object-cover   "
@@ -21,19 +24,30 @@ const SideBar = () => {
         <Link
           className={`${
             pathname === "/calendars"
-              ? "bg-[#C3BEF5] text-black rounded-r-full px-5 py-1 font-semibold"
+              ? "bg-[#C3BEF5] text-black rounded-r-full px-5 py-1 "
               : ""
-          } flex flex-row items-center gap-[6px] px-5 py-1 font-medium`}
+          } flex flex-row items-center gap-[6px] px-5 py-1 font-semibold`}
           to={"/calendar"}
         >
           <HiOutlineCalendar /> Calendar
         </Link>
         <Link
           className={`${
-            pathname === "/payments"
-              ? "bg-[#bfbbf0] text-black rounded-r-full font-semibold"
+            pathname === "/courts"
+              ? "bg-[#bfbbf0] text-black rounded-r-full"
               : ""
-          } flex flex-row items-center gap-[6px] px-5 py-1 font-medium`}
+          } flex flex-row items-center gap-[6px] px-5 py-1 font-semibold`}
+          to={"/courts"}
+        >
+          <PiCourtBasketballFill className="color" />
+          Courts
+        </Link>
+        <Link
+          className={`${
+            pathname === "/payments"
+              ? "bg-[#bfbbf0] text-black rounded-r-full"
+              : ""
+          } flex flex-row items-center gap-[6px] px-5 py-1 font-semibold`}
           to={"/payments"}
         >
           <FaFileInvoiceDollar />
@@ -42,9 +56,9 @@ const SideBar = () => {
         <Link
           className={`${
             pathname === "/customers"
-              ? "bg-[#bfbbf0] text-black rounded-r-full font-semibold"
+              ? "bg-[#bfbbf0] text-black rounded-r-full"
               : ""
-          } flex flex-row items-center gap-[6px] px-5 py-1 font-medium`}
+          } flex flex-row items-center gap-[6px] px-5 py-1 font-semibold`}
           to={"/customers"}
         >
           <IoPersonSharp />
@@ -53,13 +67,24 @@ const SideBar = () => {
         <Link
           className={`${
             pathname === "/settings"
-              ? "bg-[#bfbbf0] text-black rounded-r-full font-semibold"
+              ? "bg-[#bfbbf0] text-black rounded-r-full"
               : ""
-          } flex flex-row items-center gap-[6px] px-5 py-1 font-medium`}
+          } flex flex-row items-center gap-[6px] px-5 py-1 font-semibold`}
           to={"/settings"}
         >
           <IoSettingsSharp />
           Settings
+        </Link>
+        <Link
+          className={`${
+            pathname === "/logout"
+              ? "bg-[#bfbbf0] text-black rounded-r-full"
+              : ""
+          } flex flex-row items-center gap-[6px] px-5 py-1 font-semibold`}
+          to={"/logout"}
+        >
+          <GoSignOut />
+          Logout
         </Link>
       </div>
     </div>

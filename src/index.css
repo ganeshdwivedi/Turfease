@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
+/* body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
@@ -14,6 +14,59 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+} */
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --font-thin: "AleoThin";
+  --font-light: "AleoLight";
+  --font-regular: "AleoRegular";
+  --font-medium: 'AleoMedium';
+  --font-semibold: "AleoSemibold";
+  --font-bold: "AleoBold";
+}
+
+@font-face {
+  font-family: 'AleoThin';
+  src: url('../public/fonts/Aleo-Thin.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'AleoLight';
+  src: url('../public/fonts/Aleo-Light.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'AleoMedium';
+  src: url('../public/fonts/Aleo-Medium.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'AleoSemiBold';
+  src: url('../public/fonts/Aleo-SemiBold.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'AleoBold';
+  src: url('../public/fonts/Aleo-Bold.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'AleoRegular';
+  src: url('../public/fonts/Aleo-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
 }
 
 .fc-license-message {
@@ -30,13 +83,13 @@ code {
 
 .fc .fc-col-header-cell-cushion {
   padding: 20px;
-  /* font-family: 'IBMBold'; */
+  font-family: 'AleoBold';
 }
 
 .fc .fc-timegrid-axis-cushion,
 .fc .fc-timegrid-slot-label-cushion {
   font-size: 13px;
-  /* font-family: 'IBMRegular'; */
+  font-family: 'AleoRegular';
 }
 
 .fc {
@@ -67,7 +120,7 @@ code {
 
 .cancel>.fc-event-main {
   color: black !important;
-  /* font-family: IBMMedium !important; */
+  font-family: AleoMedium !important;
   padding-left: 5px !important;
 }
 
@@ -85,7 +138,7 @@ code {
 
 .success>.fc-event-main {
   color: white !important;
-  /* font-family: IBMMedium !important; */
+  font-family: AleoMedium !important;
   padding-left: 5px !important;
 }
 

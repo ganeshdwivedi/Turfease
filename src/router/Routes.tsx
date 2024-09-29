@@ -7,6 +7,7 @@ import Calendar from "../pages/Calendar";
 import Payments from "../pages/Payments";
 import Court from "../pages/Court";
 import Customer from "../pages/Customer";
+import Logout from "../pages/Logout";
 
 const RequireAuth: React.FC<any> = ({ children }) => {
   //   const context = useContext(MainContext);
@@ -64,8 +65,8 @@ const router = createBrowserRouter([
     ),
     children: [
       { path: "calendars", element: <Calendar /> },
-      //   { path: "logout", element: <Logout /> },
-      // { path: "bookings", element: <Bookings /> },
+      { path: "logout", element: <Logout /> },
+      { path: "courts", element: <Court /> },
       { path: "payments", element: <Payments /> },
       { path: "courts", element: <Court /> },
       { path: "customers", element: <Customer /> },

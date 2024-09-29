@@ -153,6 +153,7 @@ export default function SettingsTable() {
       case "name":
         return (
           <User
+            className="font-medium"
             avatarProps={{ radius: "lg", src: user.avatar }}
             description={user.email}
             name={user.name}
@@ -161,8 +162,8 @@ export default function SettingsTable() {
       case "role":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{cellValue}</p>
-            <p className="text-bold text-tiny capitalize text-default-400">
+            <p className="font-medium text-small capitalize">{cellValue}</p>
+            <p className="font-regular text-tiny capitalize text-default-400">
               {user.team}
             </p>
           </div>
@@ -170,7 +171,7 @@ export default function SettingsTable() {
       case "status":
         return (
           <Chip
-            className="capitalize"
+            className="capitalize font-regular"
             color={"default"}
             size="sm"
             variant="flat"
@@ -270,6 +271,7 @@ export default function SettingsTable() {
               </DropdownMenu>
             </Dropdown>
             <Button
+              className="font-medium"
               onClick={onOpen}
               color="primary"
               endContent={<FaChevronDown />}
@@ -279,7 +281,7 @@ export default function SettingsTable() {
           </div>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">
+          <span className="text-default-400 font-medium text-small">
             Total {users.length} users
           </span>
         </div>
@@ -291,7 +293,7 @@ export default function SettingsTable() {
   const bottomContent = React.useMemo(() => {
     return (
       <div className="py-2 px-2 flex justify-between items-center">
-        <span className="w-[30%] text-small text-default-400">
+        <span className="w-[30%] font-medium text-small text-default-400">
           {selectedKeys.size > 0
             ? `${selectedKeys.size} of ${filteredItems.length} selected`
             : `${filteredItems.length} total items`}

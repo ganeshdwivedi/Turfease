@@ -10,6 +10,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
+        'thin': "var(--font-thin)",
+        'light': "var(--font-light)",
         'regular': "var(--font-regular)",
         'medium': "var(--font-medium)",
         'semibold': "var(--font-semibold)",
