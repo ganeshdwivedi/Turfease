@@ -5,14 +5,14 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import resourceTimeGridPlugin from "@fullcalendar/resource-timegrid";
 import { useEffect, useRef, useState } from "react";
 import moment from "moment";
-import DateCarousel from "../../features/DateCrousel";
-import CustomModal from "../../features/calendar/CustomModal";
+import DateCarousel from "../DateCrousel";
+import CustomModal from "./CustomModal";
 import AirDatepicker from "air-datepicker";
-import AirDatepickerReact from "./AirDatePicker";
+import AirDatepickerReact from "../../components/calendar/AirDatePicker";
 
 const courts = [{ name: "Table 1" }, { name: "Table 2" }, { name: "Table 3" }];
 
-const fullCalendar = () => {
+const CalendarPage = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const calendarRef = useRef<FullCalendar>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -100,4 +100,4 @@ const fullCalendar = () => {
   );
 };
 
-export default fullCalendar;
+export default CalendarPage;

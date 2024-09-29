@@ -3,9 +3,10 @@ import { HiOutlineCalendar } from "react-icons/hi2";
 import { FaFileInvoiceDollar } from "react-icons/fa";
 import { IoPersonSharp } from "react-icons/io5";
 import { IoSettingsSharp } from "react-icons/io5";
+import { Link, useLocation } from "react-router-dom";
 
 const SideBar = () => {
-  const pathname = usePathname();
+  const { pathname } = useLocation();
 
   return (
     <div className="bg-[#424B96] w-[250px] min-h-[100vh] flex flex-col items-center text-white font-regular">
@@ -19,11 +20,11 @@ const SideBar = () => {
       <div className="flex flex-col text-left mt-20 gap-4">
         <Link
           className={`${
-            pathname === "/calendar"
-              ? "bg-[#C3BEF5] text-black rounded-full px-5 py-1 font-semibold"
+            pathname === "/calendars"
+              ? "bg-[#C3BEF5] text-black rounded-r-full px-5 py-1 font-semibold"
               : ""
           } flex flex-row items-center gap-[6px] px-5 py-1 font-medium`}
-          href={"/calendar"}
+          to={"/calendar"}
         >
           <HiOutlineCalendar /> Calendar
         </Link>
@@ -33,7 +34,7 @@ const SideBar = () => {
               ? "bg-[#bfbbf0] text-black rounded-r-full font-semibold"
               : ""
           } flex flex-row items-center gap-[6px] px-5 py-1 font-medium`}
-          href={"/payments"}
+          to={"/payments"}
         >
           <FaFileInvoiceDollar />
           Payments
@@ -44,7 +45,7 @@ const SideBar = () => {
               ? "bg-[#bfbbf0] text-black rounded-r-full font-semibold"
               : ""
           } flex flex-row items-center gap-[6px] px-5 py-1 font-medium`}
-          href={"/customers"}
+          to={"/customers"}
         >
           <IoPersonSharp />
           Customers
@@ -55,7 +56,7 @@ const SideBar = () => {
               ? "bg-[#bfbbf0] text-black rounded-r-full font-semibold"
               : ""
           } flex flex-row items-center gap-[6px] px-5 py-1 font-medium`}
-          href={"/settings"}
+          to={"/settings"}
         >
           <IoSettingsSharp />
           Settings

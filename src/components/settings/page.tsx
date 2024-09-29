@@ -1,5 +1,5 @@
 import React from "react";
-import SettingsTable from "./settingstab";
+import SettingsTable from "./SettingTable";
 
 const page = () => {
   return (

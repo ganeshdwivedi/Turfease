@@ -1,6 +1,6 @@
-import { Modal, ModalBody, ModalContent, Switch,cn } from "@nextui-org/react";
+import { Modal, ModalBody, ModalContent, Switch, cn } from "@nextui-org/react";
 import React, { useEffect } from "react";
-import { userType } from "./settingstab";
+import { userType } from "./SettingTable";
 import { useForm } from "react-hook-form";
 
 interface formInput {
@@ -9,7 +9,7 @@ interface formInput {
   avatar: string;
   email: string;
   status: string;
-  active:boolean
+  active: boolean;
 }
 
 const AdminViewModal = ({
@@ -23,21 +23,24 @@ const AdminViewModal = ({
 }) => {
   const { register, watch, control, setValue, handleSubmit, reset } =
     useForm<formInput>();
-  const { name, email, number, avatar, status,active } = watch();
+  const { name, email, number, avatar, status, active } = watch();
 
   useEffect(() => {
     if (!!admin) {
-        const active = admin.status==="active"?true:false;
-        const updateData = {...admin,active:active}
+      const active = admin.status === "active" ? true : false;
+      const updateData = { ...admin, active: active };
       reset(updateData);
       return;
     }
-    reset({avatar:'https://tse2.mm.bing.net/th?id=OIP.hyOp4DHwU808lVPQ7qaZJAHaHa&pid=Api&P=0&h=180'});
+    reset({
+      avatar:
+        "https://tse2.mm.bing.net/th?id=OIP.hyOp4DHwU808lVPQ7qaZJAHaHa&pid=Api&P=0&h=180",
+    });
   }, [admin]);
 
-  const handleclose = ()=>{
+  const handleclose = () => {
     onOpenChange();
-  }
+  };
 
   return (
     <Modal size="xl" isOpen={isOpen} onOpenChange={handleclose}>
@@ -75,18 +78,26 @@ const AdminViewModal = ({
                   value={"123412412"}
                 />
                 <div className="flex flex-row justify-between items-center w-full">
-                <p className="font-regular tex-sm capitalize ml-3 ">{status}</p>
-                <Switch classNames={{ wrapper: "p-0 h-5 overflow-visible",
-                     thumb: cn("w-[14px] h-[14px] border-2 shadow-lg",
+                  <p className="font-regular tex-sm capitalize ml-3 ">
+                    {status}
+                  </p>
+                  <Switch
+                    classNames={{
+                      wrapper: "p-0 h-5 overflow-visible",
+                      thumb: cn(
+                        "w-[14px] h-[14px] border-2 shadow-lg",
                         "group-data-[hover=true]:border-primary",
                         "group-data-[selected=true]:ml-6",
                         "group-data-[pressed=true]:w-4",
-                        "group-data-[selected]:group-data-[pressed]:ml-4",
+                        "group-data-[selected]:group-data-[pressed]:ml-4"
                       ),
-                }} size="sm" onChange={()=>setValue('active',!active)} isSelected={active} color="primary"/>
+                    }}
+                    size="sm"
+                    onChange={() => setValue("active", !active)}
+                    isSelected={active}
+                    color="primary"
+                  />
                 </div>
-              
-                 
               </div>
             </div>
           </div>
@@ -97,7 +108,7 @@ const AdminViewModal = ({
               onClick={() => onOpenChange(false)}
               className="shadow-btn font-regular px-3 py-1 rounded-md"
             >
-             {!!admin ?"Delete": 'Cancel'}
+              {!!admin ? "Delete" : "Cancel"}
             </button>
             <button className="bg-primary text-white shadow-btn font-regular px-3 py-1 rounded-md">
               Save

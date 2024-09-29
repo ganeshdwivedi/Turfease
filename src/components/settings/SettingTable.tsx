@@ -33,13 +33,15 @@ interface Colour {
   inactive: string;
 }
 
+//statusColorMap[user.status as keyof Colour]
+
 interface UserType {
   id: number;
   name: string;
   role: string;
   team: string;
   status: string;
-  age: number;
+  age: string;
   avatar: string;
   email: string;
 }
@@ -86,15 +88,15 @@ const initalSelectedAdmin = {
   avatar: "",
   email: "",
 };
-export default function App() {
+export default function SettingsTable() {
   const [filterValue, setFilterValue] = React.useState("");
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [SelectedAdmin, setSelectedAdmin] =
     useState<userType>(initalSelectedAdmin);
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
-  const [statusFilter, setStatusFilter] = React.useState("all");
+  const [statusFilter, setStatusFilter] = React.useState<any>("all");
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [sortDescriptor, setSortDescriptor] = React.useState({
+  const [sortDescriptor, setSortDescriptor] = React.useState<any>({
     column: "age",
     direction: "ascending",
   });
@@ -144,7 +146,7 @@ export default function App() {
     onOpen();
   };
 
-  const renderCell = React.useCallback((user, columnKey) => {
+  const renderCell = React.useCallback((user: any, columnKey: any) => {
     const cellValue = user[columnKey];
 
     switch (columnKey) {
@@ -169,7 +171,7 @@ export default function App() {
         return (
           <Chip
             className="capitalize"
-            color={statusColorMap[user.status as keyof Colour]}
+            color={"default"}
             size="sm"
             variant="flat"
           >
