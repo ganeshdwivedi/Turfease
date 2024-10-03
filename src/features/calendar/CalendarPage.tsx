@@ -9,6 +9,7 @@ import DateCarousel from "../DateCrousel";
 import CustomModal from "./CustomModal";
 import AirDatepicker from "air-datepicker";
 import AirDatepickerReact from "../../components/calendar/AirDatePicker";
+import { getAllBookings } from "../../api/Calendar";
 
 const courts = [{ name: "Table 1" }, { name: "Table 2" }, { name: "Table 3" }];
 
@@ -19,6 +20,11 @@ const CalendarPage = () => {
   const [event, setEvent] = useState();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const updatedDate = moment(new Date()).format("YYYY-MM-DD");
+
+  const getBookings = async () => {
+    const response = await getAllBookings();
+    console.log(response);
+  };
 
   const events = courts.map((court, index) => ({
     title: court.name,
@@ -34,6 +40,7 @@ const CalendarPage = () => {
   }));
 
   useEffect(() => {
+    getBookings();
     if (calendarRef.current) {
       const calendarApi = calendarRef.current.getApi();
 

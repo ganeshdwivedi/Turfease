@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import Settings from "../pages/Settings";
 import ErrorElement from "../pages/ErrorElement";
@@ -8,24 +8,29 @@ import Payments from "../pages/Payments";
 import Court from "../pages/Court";
 import Customer from "../pages/Customer";
 import Logout from "../pages/Logout";
+import SignIn from "../pages/SignIn";
+import { jwtDecode } from "jwt-decode";
 
 const RequireAuth: React.FC<any> = ({ children }) => {
-  //   const context = useContext(MainContext);
-  //   const authenticated = context?.authenticated;
-  const authenticated: boolean = true;
+  const [authenticated, setAuthenticated] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  //   useEffect(() => {
-  //     const token = localStorage.getItem("accessToken");
-  //     if (token) {
-  //       const decodedToken: any = jwtDecode(token);
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      const decodedToken: any = jwtDecode(token);
+      if (decodedToken.exp * 1000 > Date.now()) {
+        setAuthenticated(true);
+      } else {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("userData");
+        setAuthenticated(false);
+      }
+    }
+    setLoading(false); // No matter the condition, we set loading to false
+  }, []);
 
-  //       if (decodedToken.exp * 1000 < Date.now()) {
-  //         localStorage.removeItem("accessToken");
-  //         localStorage.removeItem("userData");
-  //         window.location.href = "/signin";
-  //       }
-  //     }
-  //   }, [context]);
+  if (loading) return <div>Loading...</div>;
 
   if (!authenticated) {
     return <Navigate to="/signin" />;
@@ -35,9 +40,7 @@ const RequireAuth: React.FC<any> = ({ children }) => {
 };
 
 const RequireAdminRole: React.FC<any> = ({ children }) => {
-  // const user_data = JSON.parse(localStorage?.getItem("user") || "");
-
-  const userRole: string = "Admin";
+  const userRole: string = "Admin"; // You can replace this with your actual role-fetching logic
 
   if (userRole === "SUPER_ADMIN") {
     return children;
@@ -68,13 +71,9 @@ const router = createBrowserRouter([
       { path: "logout", element: <Logout /> },
       { path: "courts", element: <Court /> },
       { path: "payments", element: <Payments /> },
-      { path: "courts", element: <Court /> },
       { path: "customers", element: <Customer /> },
-      //   { path: "services", element: <Services /> },
-      //   { path: "stats", element: <Statistics /> },
-      //   { path: "POS", element: <POS /> },
       {
-        path: "Settings",
+        path: "settings",
         element: (
           <RequireAdminRole>
             <Calendar />
@@ -85,9 +84,8 @@ const router = createBrowserRouter([
   },
   {
     path: "/signin",
-    // element: <SignIn />,
+    element: <SignIn />,
   },
-  // Redirect for any non-existing route
   {
     path: "*",
     element: <Navigate to="/calendars" />,
