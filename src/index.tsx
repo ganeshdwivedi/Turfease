@@ -4,15 +4,20 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { NextUIProvider } from "@nextui-org/react";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
+const queryClient = new QueryClient();
+
 root.render(
   <React.StrictMode>
-    <NextUIProvider>
-      <App />
-    </NextUIProvider>
+    <QueryClientProvider client={queryClient}>
+      <NextUIProvider>
+        <App />
+      </NextUIProvider>
+    </QueryClientProvider>
   </React.StrictMode>
 );
 

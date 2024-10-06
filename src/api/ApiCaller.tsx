@@ -8,7 +8,6 @@ apiCaller.interceptors.request.use(
     config: InternalAxiosRequestConfig<any>
   ): Promise<InternalAxiosRequestConfig<any>> => {
     const accessToken = localStorage.getItem("accessToken");
-    console.log(accessToken, "accessToken");
     if (accessToken === undefined) {
       localStorage.removeItem("accessToken");
       return config;

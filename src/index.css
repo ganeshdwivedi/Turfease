@@ -27,6 +27,14 @@ code {
   --font-bold: "AleoBold";
 }
 
+/* .fc-timegrid-slot {
+  background-color: lightgrey;
+} */
+
+.fc-business-hours {
+  /* background-color: white; */
+}
+
 @font-face {
   font-family: 'AleoThin';
   src: url('../public/fonts/Aleo-Thin.ttf') format('truetype');

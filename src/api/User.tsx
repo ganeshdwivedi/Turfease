@@ -1,3 +1,4 @@
+import axios from "axios";
 import { apiCaller } from "./ApiCaller";
 
 interface user {
@@ -7,7 +8,10 @@ interface user {
 
 export const Login = async (apidata: user) => {
   try {
-    const response = await apiCaller.post("/auth/login", apidata);
+    const response = await axios.post(
+      "https://turfeasebe.onrender.com/api/auth/login",
+      apidata
+    );
     return response.data;
   } catch (error: any) {
     throw error.message;
