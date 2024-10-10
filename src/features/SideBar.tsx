@@ -27,7 +27,7 @@ const SideBar = () => {
               ? "bg-[#C3BEF5] text-black rounded-r-full px-5 py-1 "
               : ""
           } flex flex-row items-center gap-[6px] px-5 py-1 font-semibold`}
-          to={"/calendar"}
+          to={"/calendars"}
         >
           <HiOutlineCalendar /> Calendar
         </Link>

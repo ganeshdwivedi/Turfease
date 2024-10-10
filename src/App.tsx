@@ -1,18 +1,24 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import logo from "./logo.svg";
 import "./App.css";
 import { RouterProvider } from "react-router-dom";
 import router from "./router/Routes";
 
 function App() {
+  const [loading, setLoading] = useState<boolean>(true);
+
+  console.log(loading, "LOADING");
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
     if (accessToken) {
-      // if () {
-      //   setAuthenticated(true);
-      // }
+      setLoading(false);
     }
+    setLoading(false);
   }, []);
+
+  if (loading) {
+    return <div>Loading..</div>;
+  }
 
   return (
     <div className="App">

@@ -216,7 +216,7 @@ const CalendarPage = () => {
           eventContent={(data: any) => renderEventContent(data)}
           // editable={true}
           selectable={true}
-          slotDuration={30}
+          // slotDuration={30}
           selectMirror={true}
           allDaySlot={false}
         />
