@@ -17,7 +17,7 @@ const useGetBookingsByDate = () => {
     },
     {
       enabled: !!selectedDate ? true : false,
-      cacheTime: 1000 * 60 * 5,
+      staleTime: 1000 * 60 * 5,
       retry: false,
       refetchOnWindowFocus: false,
     }

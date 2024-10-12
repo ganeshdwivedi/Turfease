@@ -9,7 +9,7 @@ interface user {
 export const Login = async (apidata: user) => {
   try {
     const response = await axios.post(
-      "https://turfeasebe.onrender.com/api/auth/login",
+      "https://turfeasebe.onrender.com/api/auth/admin/login",
       apidata
     );
     return response.data;

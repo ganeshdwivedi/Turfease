@@ -1,6 +1,6 @@
 export interface workingHours{
     start:string,
-    end:String
+    end:string
 }
 
 export interface Court {

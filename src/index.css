@@ -138,6 +138,7 @@ code {
 
 .fc-event {
   background-color: #e9ebf5;
+  overflow: hidden;
 }
 
 .fc-event>.fc-event-main {

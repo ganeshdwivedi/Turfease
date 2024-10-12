@@ -32,7 +32,6 @@ export default function App() {
       const response = await Login(data);
       localStorage.setItem("user", JSON.stringify(response.user));
       localStorage.setItem("accessToken", response.token);
-      console.log(response, "response");
       setTimeout(() => {
         navigate("/calendars");
       }, 500);

@@ -36,10 +36,7 @@ const CustomModal = ({
   const { register, setValue, watch, handleSubmit } = useForm();
   const Resource = event?.resource?._resource;
   const extendedProps = Resource?.extendedProps;
-  console.log(extendedProps, "that how i work");
   const flex: string = `flex flex-row my-1 items-center justify-between`;
-
-  console.log(watch(), "allcustoer", Resource);
 
   const onSubmit = async (data: any) => {
     const bookingDate = moment(event?.start).format("YYYY-MM-DD");
@@ -58,6 +55,7 @@ const CustomModal = ({
     try {
       const response = await CreateBooking(apidata);
       updateBookings();
+      onOpenChange(false);
     } catch (error) {
       console.log(error, "error in creating booking");
     }
@@ -81,7 +79,8 @@ const CustomModal = ({
               <div className={flex}>
                 <p className="font-regular">Location</p>
                 <p className="font-regular capitalize">
-                  {extendedProps?.location}
+                  {extendedProps?.location?.state}{" "}
+                  {extendedProps?.location?.city}
                 </p>
               </div>
               <div className={flex}>
@@ -126,7 +125,7 @@ const CustomModal = ({
               <div className={flex}>
                 <p className="font-regular">Booked By</p>
                 <Select
-                  {...register("user", { required: true })}
+                  {...register("customer", { required: true })}
                   aria-label="select customer"
                   className="max-w-32"
                 >

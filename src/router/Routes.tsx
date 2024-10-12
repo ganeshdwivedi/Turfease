@@ -12,33 +12,25 @@ import SignIn from "../pages/SignIn";
 import { jwtDecode } from "jwt-decode"; // Correct import
 
 const RequireAuth: React.FC<any> = ({ children }) => {
-  const [authenticated, setAuthenticated] = useState<boolean>(true);
+  const [authenticated, setAuthenticated] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
-
-  console.log(authenticated, "authenticated", loading);
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
-    console.log(token, "toeknnnn");
     if (token) {
-      try {
-        const decodedToken: any = jwtDecode(token);
-        console.log(decodedToken.exp * 1000 > Date.now(), "helllooooo");
-        if (decodedToken.exp * 1000 > Date.now()) {
-          setAuthenticated(true);
-          setLoading(false);
-        } else {
-          localStorage.removeItem("accessToken");
-          localStorage.removeItem("userData");
-          setAuthenticated(false);
-          setLoading(false);
-        }
-      } catch (error) {
-        console.error("Invalid token format");
+      const decodedToken: any = jwtDecode(token);
+      if (decodedToken.exp * 1000 > Date.now()) {
+        setAuthenticated(true);
+        setLoading(false);
+      } else {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("userData");
         setAuthenticated(false);
         setLoading(false);
       }
+      return;
     }
+    setLoading(false);
   }, []);
 
   if (loading) return <div>Loading...</div>;

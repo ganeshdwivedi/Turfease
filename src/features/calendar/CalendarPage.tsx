@@ -13,6 +13,9 @@ import { Booking } from "../../Types/Booking";
 import useGetBookingsByDate from "../../customHook/useGetBookingsByDate";
 import useGetAllCourts from "../../customHook/useGetAllCourts";
 import useGetAllCustomer from "../../customHook/useGetAllCustomer";
+import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/react";
+import PopoverEvent from "../../components/calendar/PopoverEvent";
+import RenderEventContent from "../../components/calendar/RenderEvents";
 
 const CalendarPage = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -34,12 +37,22 @@ const CalendarPage = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [event, setEvent] = useState();
   const [AllCusotmer, setAllCustomer] = useState<any[]>([]);
-  // const [selectedDate, setSelectedDate] = useState(new Date());
-  const [popoverVisible, setPopoverVisible] = useState(false);
-  const [eventData, setEventData] = useState({ title: "", start: "", end: "" });
   const [allCourt, setAllCourt] = useState<Court[]>([]);
   const [allBookings, setAllBookings] = useState<Booking[]>([]);
-  const [hoveredEventEl, setHoveredEventEl] = useState(null);
+  const [min, setMin] = useState<string>("08:00:00");
+  const [max, setMax] = useState<string>("10:00:00");
+
+  const handleEventClick = (eventInfo: any) => {
+    const { event } = eventInfo;
+    const { extendedProps } = event._def;
+    setEvent(extendedProps);
+    setIsOpen(true);
+  };
+
+  const handleSelect = (event: any) => {
+    setEvent(event);
+    setIsOpen((prev: boolean) => !prev);
+  };
 
   useEffect(() => {
     setSelectedDate(currentDate);
@@ -49,9 +62,27 @@ const CalendarPage = () => {
   useEffect(() => {
     if (CourtsSuccess) {
       const updatedData = CourtsData.map((item: Court) => {
-        const { courtName, _id, ...newitem } = item;
-        return { title: courtName, id: _id, ...newitem };
+        const { courtName, _id, address, ...newitem } = item;
+        return { title: courtName, id: _id, description: address, ...newitem };
       });
+
+      let latestEndTime: string = "22:00";
+      let latestStartTime: string = "08:00";
+      CourtsData.forEach((court: Court) => {
+        const start_time = court.workingHours.start;
+        const end_time = court.workingHours.end;
+
+        if (start_time < latestStartTime) {
+          latestStartTime = start_time;
+        }
+
+        if (end_time > latestEndTime) {
+          latestEndTime = end_time;
+        }
+      });
+
+      setMin(latestStartTime);
+      setMax(latestEndTime);
       setAllCourt(updatedData);
     } else {
       setAllCourt([]);
@@ -112,70 +143,8 @@ const CalendarPage = () => {
     }
   }, [currentDate]);
 
-  const handleSelect = (event: any) => {
-    setEvent(event);
-    setIsOpen((prev: boolean) => !prev);
-  };
-
-  const handleEventMouseEnter = (info: any) => {
-    setEventData({
-      title: info.event.title,
-      start: info.event.start.toLocaleTimeString(),
-      end: info.event.end ? info.event.end.toLocaleTimeString() : "",
-    });
-
-    // Set the hovered element for triggering popover
-    setHoveredEventEl(info.el);
-    setPopoverVisible(true);
-    // console.log(info, "infooenter");
-    const eventElement = info.el;
-    // Add custom hover styling
-    eventElement.style.backgroundColor = "lightblue";
-    eventElement.style.cursor = "pointer";
-  };
-
-  const handleEventMouseLeave = (info: any) => {
-    const eventElement = info.el;
-    // Reset the background color on mouse leave
-    eventElement.style.backgroundColor = "";
-  };
-
-  function renderEventContent(eventInfo: any) {
-    const { event } = eventInfo;
-    const { extendedProps } = event._def;
-    return (
-      <>
-        {!!Object.keys(extendedProps).length ? (
-          <div className="">
-            <p className="font-medium">
-              {extendedProps?.ST} - {extendedProps?.ET}
-            </p>
-            <p className="font-medium">
-              Court - {extendedProps?.court?.courtName}
-            </p>
-            <p className="font-medium capitalize">
-              Sport - {extendedProps?.sport}
-            </p>
-            <p className="font-medium">
-              Booked By -{" "}
-              <span className="font-bold capitalize">
-                {extendedProps?.user?.name}
-              </span>
-            </p>
-            {/* Add your additional text or HTML here */}
-          </div>
-        ) : (
-          <div>{eventInfo.timeText}</div>
-        )}
-      </>
-    );
-  }
-
-  const handleEventClick = (eventInfo: any) => {
-    const { event } = eventInfo;
-    const { extendedProps } = event._def;
-    setEvent(extendedProps);
-    setIsOpen(true);
+  const HedaererCustom = (e: any) => {
+    return <p>hellooo</p>;
   };
 
   return (
@@ -199,9 +168,10 @@ const CalendarPage = () => {
           initialView="resourceTimeGridDay"
           resources={allCourt}
           resourceAreaWidth="100%"
-          height={1300}
-          slotMinTime="00:00:00"
-          slotMaxTime="24:00:00"
+          resourceAreaHeaderContent={(e: any) => HedaererCustom(e)}
+          // height={1300}
+          slotMinTime={`${min}:00`}
+          slotMaxTime={`${max}:00`}
           headerToolbar={{
             left: "",
             center: "",
@@ -210,13 +180,12 @@ const CalendarPage = () => {
           select={(event: any) => handleSelect(event)}
           eventClick={(event: any) => handleEventClick(event)}
           nowIndicator={true}
-          eventMouseEnter={handleEventMouseEnter}
-          eventMouseLeave={handleEventMouseLeave}
           events={allBookings}
-          eventContent={(data: any) => renderEventContent(data)}
+          eventContent={(event: any) => {
+            return <RenderEventContent eventInfo={event} />;
+          }}
           // editable={true}
           selectable={true}
-          // slotDuration={30}
           selectMirror={true}
           allDaySlot={false}
         />
@@ -232,21 +201,4 @@ const CalendarPage = () => {
     </div>
   );
 };
-
-/* <Popover
-            isOpen={popoverVisible}
-            onClose={() => setPopoverVisible(false)}
-            placement="top"
-          >
-            <PopoverTrigger>
-              {hoveredEventEl}
-            </PopoverTrigger>
-            <PopoverContent>
-              <p>Title: {eventData.title}</p>
-              <p>Start: {eventData.start}</p>
-              <p>End: {eventData.end}</p>
-            </PopoverContent>
-          </Popover>
-          */
-
 export default CalendarPage;

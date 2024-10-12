@@ -7,7 +7,6 @@ import router from "./router/Routes";
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
 
-  console.log(loading, "LOADING");
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
     if (accessToken) {
