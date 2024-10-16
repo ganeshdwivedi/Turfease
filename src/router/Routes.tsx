@@ -63,7 +63,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/",
-    errorElement: <ErrorElement />,
+    // errorElement: <ErrorElement />,
     element: (
       <RequireAuth>
         <MainPage />

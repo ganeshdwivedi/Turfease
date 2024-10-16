@@ -5,6 +5,7 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { NextUIProvider } from "@nextui-org/react";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { Toaster } from "react-hot-toast";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -15,6 +16,7 @@ root.render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <NextUIProvider>
+      <Toaster/>
         <App />
       </NextUIProvider>
     </QueryClientProvider>

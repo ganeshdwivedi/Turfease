@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableHeader,
@@ -25,6 +25,7 @@ import { columns, users, statusOptions } from "./Constant";
 import { CiSearch } from "react-icons/ci";
 import { FaChevronDown } from "react-icons/fa6";
 import AdminViewModal from "./AdminViewModal";
+import useGetAllAdmin from "../../customHook/useGetAllAdmin";
 
 // Define interfaces for types
 interface Colour {
@@ -89,7 +90,9 @@ const initalSelectedAdmin = {
 };
 export default function SettingsTable() {
   const [filterValue, setFilterValue] = React.useState("");
+  const {isSuccess,isError,data} = useGetAllAdmin();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [AllAdmin,setAllAdmin] = useState([]);
   const [SelectedAdmin, setSelectedAdmin] =
     useState<userType>(initalSelectedAdmin);
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
@@ -102,6 +105,17 @@ export default function SettingsTable() {
   const [page, setPage] = React.useState<number>(1);
 
   const hasSearchFilter = Boolean(filterValue);
+
+
+
+
+
+  useEffect(() => {
+    if(isSuccess) setAllAdmin(data);
+    else setAllAdmin([]);
+  }, [isSuccess,isError,data])
+  
+console.log(AllAdmin,'allAdmin')
 
   // Filtering the users based on search and status
   const filteredItems = React.useMemo(() => {
@@ -144,7 +158,7 @@ export default function SettingsTable() {
     setSelectedAdmin(admin);
     onOpen();
   };
-
+  
   const renderCell = React.useCallback((user: any, columnKey: any) => {
     const cellValue = user[columnKey];
 

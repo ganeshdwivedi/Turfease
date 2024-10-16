@@ -3,7 +3,8 @@ import CustomerTable from "../components/customer/CustomerTable";
 
 const Customer = () => {
   return (
-    <div>
+    <div className="m-2">
+      <div className="text-center font-semibold text-lg mt-3 mb-5">Customers</div>
       <CustomerTable />
     </div>
   );
