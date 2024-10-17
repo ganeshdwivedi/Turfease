@@ -30,7 +30,7 @@ const InitialColumns = [
   { name: "Action", id: 3 },
 ];
 const CustomerTable = () => {
-  const { isSuccess, data, isError,refetch ,updateCustomer} = useGetAllCustomer();
+  const { isSuccess, data, isError,uploadProfile ,updateCustomer} = useGetAllCustomer();
   const [allCustomer, setAllCustomer] = useState<Customer[]>([]);
   const [selectedCustomer,setSelectedCustomer] = useState<Customer>(initialCustomer);
   const [sortedData, setSortedData] = useState<Customer[]>([]);
@@ -141,6 +141,7 @@ const CustomerTable = () => {
         </TableBody>
       </Table>
       <CustomerModel
+      uploadProfile={uploadProfile}
       update={updateCustomer}
         admin={selectedCustomer}
         isOpen={isOpen}

@@ -54,7 +54,27 @@ const useGetAllCustomer = () => {
     }
   );
 
-  return { ...query, updateCustomer: mutation.mutate };
+  
+  const update = useMutation(
+    async ({customer_id,updatedCustomer}:{customer_id:string,updatedCustomer:BECustomerUpdate}) => {
+      const response = await apiCaller.patch(`/customer/profile/upload/${customer_id}`, updatedCustomer);
+      return response.data;
+    },
+    {
+      // On success, update the cache with the new customer data
+      onSuccess: (data:BECustomer) => {
+        queryClient.setQueryData<Customer[]>(["GetAllCustomer"], (oldData:any) => {
+          return oldData.map((customer:Customer) =>
+            customer._id === data.user._id ? { ...customer, ...data.user } : customer
+          );
+        });
+        toast.success(data.message);
+      },
+    }
+  );
+
+
+  return { ...query, updateCustomer: mutation.mutate,uploadProfile:update.mutate };
 };
 
 export default useGetAllCustomer;

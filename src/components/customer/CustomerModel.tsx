@@ -1,4 +1,4 @@
-import { Modal, ModalBody, ModalContent, ModalHeader, Switch, Tab, Tabs, cn } from "@nextui-org/react";
+import { Modal, ModalBody, ModalContent, ModalHeader, Spinner, Switch, Tab, Tabs, cn } from "@nextui-org/react";
 import React, { ChangeEvent, ReactElement, useEffect, useState } from "react";
 import toast, { Toaster } from 'react-hot-toast';
 import { useForm } from "react-hook-form";
@@ -7,6 +7,7 @@ import Customer from "../../Types/Customer";
 import useGetAllCustomerBookings from "../../customHook/useGetAllCustomerBookings";
 import moment from "moment";
 import { UpdateCustomer } from "../../api/User";
+import axios from "axios";
 
 interface formInput {
   _id:string  
@@ -14,32 +15,41 @@ interface formInput {
   phone_number: number;
   profile: string;
   email: string;
+  isLoading:boolean;
+  isProfileSuccess:any;
+  tempProfile:string;
+  generatedUrl:string;
 }
 
 const CustomerModel = ({
   admin,
   isOpen,
   onOpenChange,
-  update
+  update,
+  uploadProfile
 }: {
   admin: Customer;
   isOpen: boolean;
   onOpenChange: any;
-  update:any
+  update:any;
+  uploadProfile:any;
 }) => {
+   
     const {isSuccess,isError,data,setCustomerId} = useGetAllCustomerBookings();
+    const [isshowProfile,setIsShowProfile] = useState<boolean>(false);
     // all bookings of selectedCustomer
     const [AllPastBookings,SetAllPastBookings] = useState<any[]>([]);
     const [AllFutureBookings,SetAllFutureBookings] = useState<any[]>([]);
     const { register, watch, control, setValue, handleSubmit, reset } =
     useForm<formInput>();
     const [selectedKey,setSelectedKey] = useState<string>('past');
-  const { _id,name, email, phone_number, profile } = watch();
+  const { _id,name, email, phone_number,generatedUrl,tempProfile,isProfileSuccess,isLoading, profile } = watch();
 
   useEffect(() => {
     if (!!admin) {
         setCustomerId(admin._id);
-      reset(admin);
+        
+      reset({...admin,tempProfile:admin.profile});
       return;
     }
     reset({
@@ -71,10 +81,41 @@ const CustomerModel = ({
   }
   
 
+  const uploadProf = async(data:any)=>{
+    try {
+      const response  = await axios.post(`https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUD_NAME}/image/upload`,data);
+      setValue('generatedUrl',response.data.secure_url)
+      setValue('isLoading',false);
+      setValue('isProfileSuccess',true)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+
+const handleCahnge = (e:any)=>{
+  setValue('isProfileSuccess',false);
+  const formdata = new FormData();
+  formdata.append('file',e.target.files[0])
+  formdata.append('upload_preset','Turfease');
+  setValue('tempProfile',URL.createObjectURL(e.target.files[0]));
+  uploadProf(formdata)
+  setValue('isLoading',true);
+}
 
   const handleclose = () => {
     onOpenChange();
   };
+
+
+  const handleUploadSave = ()=>{
+   if(tempProfile){
+    const apidata = {profile:generatedUrl};
+    uploadProfile({customer_id:_id,updatedCustomer:apidata});
+    setIsShowProfile(false);
+    setValue('profile',generatedUrl)
+   }
+  }
 
   return (
     <Modal size="2xl" isOpen={isOpen} onOpenChange={handleclose}>
@@ -90,7 +131,8 @@ const CustomerModel = ({
               src={profile}
               alt="admin-img"
             />
-            <div className="rounded-full p-[3px] absolute bottom-0 right-0 bg-black text-white w-4 h-4">
+          
+            <div onClick={()=>setIsShowProfile(true)} className="rounded-full py-[3px] px-[3.5px] absolute bottom-0 right-0 bg-black text-white w-4 h-4">
             <FaCamera className="text-[10px]"/>
             </div>
             </div>
@@ -187,6 +229,35 @@ const CustomerModel = ({
             </button>
           </div>
           </form>
+          <Modal size="xs" isOpen={isshowProfile} onClose={()=>setIsShowProfile(false)}>
+            <ModalContent>
+              <ModalHeader>
+                <p className="font-regular">Upload Profile</p>
+              </ModalHeader>
+              <ModalBody>
+                
+              <div className="relative w-24 ml-20">
+            <img
+              className="rounded-full object-cover w-24 h-24"
+              src={tempProfile}
+              alt="admin-img"
+            />
+          
+            <div onClick={()=>setIsShowProfile(true)} className="rounded-full py-[3px] px-[3.5px] absolute bottom-1 right-1 bg-black text-white w-4 h-4">
+            <FaCamera className="text-[10px]"/>
+            <div className="relative" >
+            <input className="w-5 h-5 absolute top-[-9px] opacity-0 right-0" type="file" onChange={handleCahnge} />
+            </div>
+            </div>
+            </div>
+            {
+              isLoading ? <Spinner />:''
+            }
+
+            <button onClick={handleUploadSave} className={`text-white w-16 rounded-md ${isProfileSuccess ? 'bg-[#06b6d4]' :'pointer-events-none cursor-not-allowed bg-red-400'}`}>Save</button>
+              </ModalBody>
+            </ModalContent>
+          </Modal>
         </ModalBody>
       </ModalContent>
     </Modal>

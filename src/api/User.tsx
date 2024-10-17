@@ -29,3 +29,16 @@ export const UpdateCustomer = async (customer_id:string,apidata: user) => {
     throw error.response.data;
   }
 };
+
+
+export const UpdateSelfDetails = async (apidata:{profile:string}) => {
+  try {
+    const response = await apiCaller.patch(
+      `/profile/upload`,
+      apidata
+    );
+    return response.data;
+  } catch (error: any) {
+    throw error.response.data;
+  }
+};
