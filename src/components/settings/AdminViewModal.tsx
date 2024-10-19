@@ -11,7 +11,7 @@ interface formInput {
   status: string;
   active: boolean;
 }
-
+  
 const AdminViewModal = ({
   admin,
   isOpen,
@@ -46,58 +46,56 @@ const AdminViewModal = ({
     <Modal size="xl" isOpen={isOpen} onOpenChange={handleclose}>
       <ModalContent>
         <ModalBody className="w-auto">
-          <div className="flex flex-row items-center gap-3">
+          {/* <div>
             <img
               className="rounded-full w-16 h-16"
               src={avatar}
               alt="admin-img"
             />
-            <div className="flex flex-col gap-2">
-              <div className="flex flex-row items-center gap-2">
-                <input
-                  type="text"
-                  placeholder="Enter Name"
-                  className="border border-black border-opacity-30 rounded-md px-2"
-                  onChange={(e: any) => console.log(e.target.value)}
-                  value={name}
+          </div> */}
+          <div className="flex flex-col gap-2">
+            <div className="flex flex-row items-center gap-2">
+              <input
+                type="text"
+                placeholder="Enter Name"
+                className="border border-black border-opacity-30 rounded-md px-2"
+                onChange={(e: any) => console.log(e.target.value)}
+                value={name}
+              />
+              <input
+                type="email"
+                placeholder="Enter Email"
+                className="border border-black border-opacity-30 rounded-md px-2"
+                onChange={(e: any) => console.log(e.target.value)}
+                value={email}
+              />
+            </div>
+            <div className="flex flex-row items-center gap-2">
+              <input
+                type="tel"
+                placeholder="Enter Phone Number"
+                className="border border-black border-opacity-30 rounded-md px-2"
+                onChange={(e: any) => console.log(e.target.value)}
+                value={"123412412"}
+              />
+              <div className="flex flex-row justify-between items-center w-full">
+                <p className="font-regular tex-sm capitalize ml-3 ">{status}</p>
+                <Switch
+                  classNames={{
+                    wrapper: "p-0 h-5 overflow-visible",
+                    thumb: cn(
+                      "w-[14px] h-[14px] border-2 shadow-lg",
+                      "group-data-[hover=true]:border-primary",
+                      "group-data-[selected=true]:ml-6",
+                      "group-data-[pressed=true]:w-4",
+                      "group-data-[selected]:group-data-[pressed]:ml-4"
+                    ),
+                  }}
+                  size="sm"
+                  onChange={() => setValue("active", !active)}
+                  isSelected={active}
+                  color="primary"
                 />
-                <input
-                  type="email"
-                  placeholder="Enter Email"
-                  className="border border-black border-opacity-30 rounded-md px-2"
-                  onChange={(e: any) => console.log(e.target.value)}
-                  value={email}
-                />
-              </div>
-              <div className="flex flex-row items-center gap-2">
-                <input
-                  type="tel"
-                  placeholder="Enter Phone Number"
-                  className="border border-black border-opacity-30 rounded-md px-2"
-                  onChange={(e: any) => console.log(e.target.value)}
-                  value={"123412412"}
-                />
-                <div className="flex flex-row justify-between items-center w-full">
-                  <p className="font-regular tex-sm capitalize ml-3 ">
-                    {status}
-                  </p>
-                  <Switch
-                    classNames={{
-                      wrapper: "p-0 h-5 overflow-visible",
-                      thumb: cn(
-                        "w-[14px] h-[14px] border-2 shadow-lg",
-                        "group-data-[hover=true]:border-primary",
-                        "group-data-[selected=true]:ml-6",
-                        "group-data-[pressed=true]:w-4",
-                        "group-data-[selected]:group-data-[pressed]:ml-4"
-                      ),
-                    }}
-                    size="sm"
-                    onChange={() => setValue("active", !active)}
-                    isSelected={active}
-                    color="primary"
-                  />
-                </div>
               </div>
             </div>
           </div>

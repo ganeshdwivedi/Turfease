@@ -6,6 +6,8 @@ import reportWebVitals from "./reportWebVitals";
 import { NextUIProvider } from "@nextui-org/react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Toaster } from "react-hot-toast";
+import { Provider } from "react-redux";
+import { store } from "./redux/store";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -14,12 +16,14 @@ const queryClient = new QueryClient();
 
 root.render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <NextUIProvider>
-      <Toaster/>
-        <App />
-      </NextUIProvider>
-    </QueryClientProvider>
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+        <NextUIProvider>
+          <Toaster />
+          <App />
+        </NextUIProvider>
+      </QueryClientProvider>
+    </Provider>
   </React.StrictMode>
 );
 

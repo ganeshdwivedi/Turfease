@@ -11,7 +11,6 @@ const DateCarousel = ({
   setSelectedDate: any;
 }) => {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [viewPort, setView] = useState(false);
   const today = moment();
 
   // Generate an array of dates for the current year
@@ -51,13 +50,13 @@ const DateCarousel = ({
   const handleClick = (direction: string) => {
     setActiveIndex((prevIndex) => {
       const maxIndex = yearDates.length - 4; // Maximum index to prevent overflow
-      if (direction === "next" && prevIndex < maxIndex) {
+      if (direction === "next") {
         const nextDate = moment(selectedDate).add(1, "day").toDate();
         setSelectedDate(nextDate);
         return prevIndex + 1;
       }
 
-      if (direction === "prev" && prevIndex > 0) {
+      if (direction === "prev") {
         const nextDate = moment(selectedDate).subtract(1, "day").toDate();
         setSelectedDate(nextDate);
         return prevIndex - 1;
@@ -72,24 +71,6 @@ const DateCarousel = ({
     }
   };
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (
-        window.matchMedia("(min-width: 300px) and (max-width: 600px)").matches
-      ) {
-        setView(true);
-      } else {
-        setView(false);
-      }
-    };
-
-    handleResize();
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
   if (!selectedDate) return null;
 
   return (
@@ -97,12 +78,11 @@ const DateCarousel = ({
       <button
         className="w-[0px] sm:w-[23px] py-[2px] md:px-[7px] pointer-events-none md:pointer-events-auto md:opacity-100 opacity-0"
         onClick={() => handleClick("prev")}
-        disabled={activeIndex === 0}
       >
         <FaAngleLeft style={{ color: "#22356D" }} />
       </button>
       {yearDates
-        .slice(activeIndex, activeIndex + (viewPort ? yearDates.length : 5))
+        .slice(activeIndex, activeIndex + 5)
         .map((date: any, i: number) => {
           const isSelected = date.isSame(selectedDate, "day");
           const buttonStyles = {
