@@ -25,21 +25,7 @@ export const LoginME = async () => {
   }
 };
 
-export const UpdateAdminInfo = async (apidata: BECustomerUpdate) => {
-  try {
-    const response = await apiCaller.patch("/profileUpdate", apidata);
-  } catch (error: any) {
-    const errMessage = error.response.data.message;
-    toast.error(errMessage);
-  }
-};
-
-// update profile of Self
-export const UpdateSelfDetails = async (apidata: { profile: string }) => {
-  try {
-    const response = await apiCaller.patch(`/profile/upload`, apidata);
-    return response.data;
-  } catch (error: any) {
-    throw error.response.data;
-  }
+export const UpdateAdminInfo = async (apidata: BECustomerUpdate | any) => {
+  const response = await apiCaller.patch("/profileUpdate", apidata);
+  return response;
 };

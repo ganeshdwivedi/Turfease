@@ -100,7 +100,7 @@ const DateCarousel = ({
               key={i}
               onClick={() => handleDayClick(date)}
               className={`py-[4px] shadow-btn leading-4 flex flex-col justify-center items-center px-[16px] rounded-[7px] text-[14px] ${
-                isSelected ? `bg-[#C3BEF5] text-white` : `bg-white`
+                isSelected ? `bg-[#508267] text-white` : `bg-white`
               } font-medium`}
             >
               <p>{dayName}</p>

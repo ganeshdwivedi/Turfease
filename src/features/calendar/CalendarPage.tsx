@@ -69,8 +69,8 @@ const CalendarPage = () => {
       let latestEndTime: string = "22:00";
       let latestStartTime: string = "08:00";
       CourtsData.forEach((court: Court) => {
-        const start_time = court.workingHours.start;
-        const end_time = court.workingHours.end;
+        const start_time = court.workingHours?.start;
+        const end_time = court.workingHours?.end;
 
         if (start_time < latestStartTime) {
           latestStartTime = start_time;

@@ -8,8 +8,8 @@ export default interface Customer{
 
 
 export interface BECustomerUpdate{
-    phone_number?:number;
+    phone_number?:string;
     email?:string;
     name?:string;
-    profile?:string;
+    profile?:string|Blob;
 }

@@ -18,10 +18,10 @@ module.exports = {
         'bold': "var(--font-bold)",
       },
       colors: {
-        primary: "#C3BEF5",
-        cancel: "#dddbf8",
-        success: '#b8b4e7',
-        sidebar: '#424B96',
+        primary: "#68947c",
+        cancel: "#68947c",
+        success: '#68947c',
+        sidebar: '#508267',
         background: '#EEEFF5'
       },
     },

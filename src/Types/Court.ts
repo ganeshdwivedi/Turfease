@@ -11,5 +11,6 @@ location:string,
 ownedBy:string,
 pricePerHour:string,
 sportsAvailable:string[],
-workingHours:workingHours
+workingHours:workingHours,
+profile_img:string
 }

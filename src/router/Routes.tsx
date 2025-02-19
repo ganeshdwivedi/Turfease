@@ -10,10 +10,15 @@ import Customer from "../pages/Customer";
 import Logout from "../pages/Logout";
 import SignIn from "../pages/SignIn";
 import { jwtDecode } from "jwt-decode"; // Correct import
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
 
 const RequireAuth: React.FC<any> = ({ children }) => {
   const [authenticated, setAuthenticated] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
+  const isauthenticated = useSelector(
+    (state: RootState) => state.auth.isLoggedIn
+  );
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
@@ -35,7 +40,7 @@ const RequireAuth: React.FC<any> = ({ children }) => {
 
   if (loading) return <div>Loading...</div>;
 
-  if (!authenticated) {
+  if (!isauthenticated) {
     return <Navigate to="/signin" />;
   }
 

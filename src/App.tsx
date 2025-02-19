@@ -8,6 +8,8 @@ import { updateAuthState } from "./redux/authSlice";
 import { RootState } from "./redux/store";
 import { LoginME } from "./api/User";
 import toast from "react-hot-toast";
+import { GenerateToken, messaging } from "./notifications/firebase";
+import { onMessage } from "firebase/messaging";
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -23,17 +25,40 @@ function App() {
           user,
         })
       );
+      setLoading(false);
     } catch (error: any) {
       toast.error(error);
     }
   };
+
+  // useEffect(() => {
+  //   GenerateToken();
+  //   onMessage(messaging, (payload) => {
+  //     console.log(payload, "payloaddd");
+  //   });
+
+  //   if ("serviceWorker" in navigator) {
+  //     navigator.serviceWorker
+  //       .register("/firebase-messaging-sw.js")
+  //       .then((registration) => {
+  //         console.log(
+  //           "Service Worker registered with scope:",
+  //           registration.scope
+  //         );
+  //       })
+  //       .catch((err) => {
+  //         console.error("Service Worker registration failed:", err);
+  //       });
+  //   }
+  // }, []);
+
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
     if (accessToken) {
+      GETUSER();
+    } else {
       setLoading(false);
     }
-    setLoading(false);
-    GETUSER();
   }, []);
 
   if (loading) {

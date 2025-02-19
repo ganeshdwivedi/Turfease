@@ -81,6 +81,10 @@ code {
   display: none;
 }
 
+.CourtBGGG{
+  background-image: url('../public/Images/court.jpg');
+}
+
 .fc .fc-timegrid-col.fc-day-today {
   background-color: unset;
 }
@@ -115,14 +119,14 @@ code {
 }
 
 .fc-v-event {
-  border: 1px solid #b8b4e7;
+  border: 1px solid #508267;
   display: block;
   width: 102.5% !important;
   border-radius: 4px !important;
 }
 
 .cancel {
-  background-color: #dddbf8 !important;
+  background-color: #508267 !important;
   color: black !important;
 }
 
@@ -133,11 +137,11 @@ code {
 }
 
 .success {
-  background-color: #b8b4e7 !important;
+  background-color: #508267 !important;
 }
 
 .fc-event {
-  background-color: #e9ebf5;
+  background-color: #d7f5e5;
   overflow: hidden;
 }
 

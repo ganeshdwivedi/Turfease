@@ -21,7 +21,7 @@ import axios from "axios";
 interface formInput {
   _id: string;
   name: string;
-  phone_number: number;
+  phone_number: string | any;
   profile: string;
   email: string;
   isLoading: boolean;
@@ -65,8 +65,8 @@ const CustomerModel = ({
   } = watch();
 
   useEffect(() => {
-    if (!!admin) {
-      setCustomerId(admin._id);
+    if (admin._id !== "0") {
+      setCustomerId(admin?._id);
 
       reset({ ...admin, tempProfile: admin.profile });
       return;
@@ -91,11 +91,22 @@ const CustomerModel = ({
     }
   }, [isSuccess, isError, data]);
 
-  const OnSubmit = async (data: any) => {
+  const appendFormData = () => {
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("email", email);
+    formData.append("phone_number", phone_number);
+    tempProfile && formData.append("profile", tempProfile);
+
+    return formData;
+  };
+
+  const OnSubmit = async () => {
+    const apiData = appendFormData();
     try {
       const response = await update({
         customer_id: _id,
-        updatedCustomer: data,
+        updatedCustomer: apiData,
       });
       handleclose();
     } catch (error: any) {
@@ -103,41 +114,13 @@ const CustomerModel = ({
     }
   };
 
-  const uploadProf = async (data: any) => {
-    try {
-      const response = await axios.post(
-        `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUD_NAME}/image/upload`,
-        data
-      );
-      setValue("generatedUrl", response.data.secure_url);
-      setValue("isLoading", false);
-      setValue("isProfileSuccess", true);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleCahnge = (e: any) => {
-    setValue("isProfileSuccess", false);
-    const formdata = new FormData();
-    formdata.append("file", e.target.files[0]);
-    formdata.append("upload_preset", "Turfease");
-    setValue("tempProfile", URL.createObjectURL(e.target.files[0]));
-    uploadProf(formdata);
-    setValue("isLoading", true);
-  };
-
   const handleclose = () => {
     onOpenChange();
   };
 
-  const handleUploadSave = () => {
-    if (tempProfile) {
-      const apidata = { profile: generatedUrl };
-      uploadProfile({ customer_id: _id, updatedCustomer: apidata });
-      setIsShowProfile(false);
-      setValue("profile", generatedUrl);
-    }
+  const handleImageUploader = (e: any, type?: string) => {
+    setValue("profile", URL.createObjectURL(e.target.files[0]));
+    setValue("tempProfile", e.target.files[0]);
   };
 
   return (
@@ -158,6 +141,11 @@ const CustomerModel = ({
                   onClick={() => setIsShowProfile(true)}
                   className="rounded-full py-[3px] px-[3px] absolute bottom-0 right-0 bg-black text-white w-4 h-4"
                 >
+                  <input
+                    type="file"
+                    className="w-4 h-4 absolute opacity-0"
+                    onChange={(e) => handleImageUploader(e, "profile")}
+                  />
                   <FaCamera className="text-[10px]" />
                 </div>
               </div>
@@ -185,7 +173,7 @@ const CustomerModel = ({
                   />
                   <button
                     type="button"
-                    className="font-regular bg-[#06b6d4] text-white px-2 py-1 rounded-md shadow-btn w-full"
+                    className="font-regular bg-sidebar text-white px-2 py-1 rounded-md shadow-btn w-full"
                   >
                     Whatsapp
                   </button>
@@ -198,9 +186,9 @@ const CustomerModel = ({
               classNames={{
                 tabList:
                   "gap-6 relative rounded-none p-0 border-b border-divider",
-                cursor: "w-full bg-[#22d3ee]",
+                cursor: "w-full bg-[#68947c]",
                 tab: "max-w-fit px-0 h-12",
-                tabContent: "group-data-[selected=true]:text-[#06b6d4]",
+                tabContent: "group-data-[selected=true]:text-[#68947c]",
               }}
               selectedKey={selectedKey}
               onSelectionChange={(e: string | any) => setSelectedKey(e)}
@@ -220,10 +208,16 @@ const CustomerModel = ({
                         <p className="flex flex-row items-center">
                           {moment(item.bookingDate).format("DD/MM/yyyy")}
                         </p>
-                        <p>{item.court.courtName}</p>
+                        <p>
+                          {item.court ? item.court.courtName : "Court Deleted"}
+                        </p>
                         <p>{item.sport}</p>
                         <p>{item.payment.totalAmount}</p>
-                        <p>{item.court.location.city}</p>
+                        <p>
+                          {item.court
+                            ? item.court.location.city
+                            : "Court Deleted"}
+                        </p>
                       </div>
                     ))
                   ) : (
@@ -273,58 +267,12 @@ const CustomerModel = ({
               </button>
               <button
                 type="submit"
-                className="bg-[#06b6d4] text-white shadow-btn font-regular px-3 py-1 rounded-md"
+                className="bg-sidebar text-white shadow-btn font-regular px-3 py-1 rounded-md"
               >
                 Save
               </button>
             </div>
           </form>
-          <Modal
-            size="xs"
-            isOpen={isshowProfile}
-            onClose={() => setIsShowProfile(false)}
-          >
-            <ModalContent>
-              <ModalHeader>
-                <p className="font-regular">Upload Profile</p>
-              </ModalHeader>
-              <ModalBody>
-                <div className="relative w-24 ml-20">
-                  <img
-                    className="rounded-full object-cover w-24 h-24"
-                    src={tempProfile ? tempProfile : "/Images/Profile.svg"}
-                    alt="admin-img"
-                  />
-
-                  <div
-                    onClick={() => setIsShowProfile(true)}
-                    className="rounded-full py-[3px] px-[3.5px] absolute bottom-1 right-1 bg-black text-white w-4 h-4"
-                  >
-                    <FaCamera className="text-[10px]" />
-                    <div className="relative">
-                      <input
-                        className="w-5 h-5 absolute top-[-9px] opacity-0 right-0"
-                        type="file"
-                        onChange={handleCahnge}
-                      />
-                    </div>
-                  </div>
-                </div>
-                {isLoading ? <Spinner /> : ""}
-
-                <button
-                  onClick={handleUploadSave}
-                  className={`text-white w-16 rounded-md ${
-                    isProfileSuccess
-                      ? "bg-[#06b6d4]"
-                      : "pointer-events-none cursor-not-allowed bg-red-400"
-                  }`}
-                >
-                  Save
-                </button>
-              </ModalBody>
-            </ModalContent>
-          </Modal>
         </ModalBody>
       </ModalContent>
     </Modal>

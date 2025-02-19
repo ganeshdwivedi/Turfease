@@ -17,24 +17,26 @@ import { BiSolidEditAlt } from "react-icons/bi";
 import { RiDeleteBinLine } from "react-icons/ri";
 import CustomerModel from "./CustomerModel";
 
-const initialCustomer ={
-  _id: '2',
-  phone_number:99939393,
-  email:'deummy@email.com',
-  name:'dummy',
-  profile:'https://images5.alphacoders.com/134/thumbbig-1340473.webp'
-}
+const initialCustomer = {
+  _id: "0",
+  phone_number: 99939393,
+  email: "deummy@email.com",
+  name: "dummy",
+  profile: "https://images5.alphacoders.com/134/thumbbig-1340473.webp",
+};
 const InitialColumns = [
   { name: "Name", id: "name", sortable: true },
   { name: "Phone number", id: "phone_number", sortable: true },
   { name: "Action", id: 3 },
 ];
 const CustomerTable = () => {
-  const { isSuccess, data, isError,uploadProfile ,updateCustomer} = useGetAllCustomer();
+  const { isSuccess, data, isError, uploadProfile, updateCustomer } =
+    useGetAllCustomer();
   const [allCustomer, setAllCustomer] = useState<Customer[]>([]);
-  const [selectedCustomer,setSelectedCustomer] = useState<Customer>(initialCustomer);
+  const [selectedCustomer, setSelectedCustomer] =
+    useState<Customer>(initialCustomer);
   const [sortedData, setSortedData] = useState<Customer[]>([]);
-  const {isOpen, onOpen, onOpenChange} = useDisclosure();
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [sortDescriptor, setSortDescriptor] = React.useState<any>({
     column: "Name",
     direction: "ascending",
@@ -56,12 +58,10 @@ const CustomerTable = () => {
     });
   }, [sortDescriptor]);
 
-
-  const handleClick = (data:any)=>{
+  const handleClick = (data: any) => {
     onOpen();
-    setSelectedCustomer(data)
-  }
-
+    setSelectedCustomer(data);
+  };
 
   useEffect(() => {
     if (!!sortedItems?.length) {
@@ -118,7 +118,10 @@ const CustomerTable = () => {
               <TableCell>
                 <div className="relative flex justify-start items-center gap-2">
                   <Tooltip content="Details">
-                    <span onClick={()=>handleClick(item)} className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                    <span
+                      onClick={() => handleClick(item)}
+                      className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                    >
                       <IoEyeOutline />
                     </span>
                   </Tooltip>
@@ -141,8 +144,8 @@ const CustomerTable = () => {
         </TableBody>
       </Table>
       <CustomerModel
-      uploadProfile={uploadProfile}
-      update={updateCustomer}
+        uploadProfile={uploadProfile}
+        update={updateCustomer}
         admin={selectedCustomer}
         isOpen={isOpen}
         onOpenChange={() => {

@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@firebasegen/default-connector": "file:dataconnect-generated/js/default-connector",
     "@fullcalendar/daygrid": "^6.1.15",
     "@fullcalendar/interaction": "^6.1.15",
     "@fullcalendar/react": "^6.1.15",
@@ -19,6 +20,7 @@
     "air-datepicker": "^3.5.3",
     "axios": "^1.7.7",
     "cloudinary-react": "^1.8.1",
+    "firebase": "^11.0.1",
     "fullcalendar": "^6.1.15",
     "jwt-decode": "^4.0.0",
     "moment": "^2.30.1",

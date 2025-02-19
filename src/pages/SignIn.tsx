@@ -16,6 +16,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Login } from "../api/User";
 import { Navigate, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { updateAuthState } from "../redux/authSlice";
 
 interface FormInput {
   email: string;
@@ -24,6 +26,7 @@ interface FormInput {
 
 export default function App() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState<boolean>(true);
   const { register, setValue, watch, handleSubmit } = useForm<FormInput>();
 
@@ -32,6 +35,7 @@ export default function App() {
       const response = await Login(data);
       localStorage.setItem("user", JSON.stringify(response.user));
       localStorage.setItem("accessToken", response.token);
+      dispatch(updateAuthState({ isLoggedIn: true, user: response.user }));
       setTimeout(() => {
         navigate("/calendars");
       }, 500);

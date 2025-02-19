@@ -1,15 +1,12 @@
 import React, { useState } from "react";
 import { HiOutlineCalendar } from "react-icons/hi2";
-import { FaFileInvoiceDollar } from "react-icons/fa";
-import { IoPersonSharp } from "react-icons/io5";
+import { LuUser2 } from "react-icons/lu";
+import { CiDollar } from "react-icons/ci";
 import { IoSettingsSharp } from "react-icons/io5";
 import { GoSignOut } from "react-icons/go";
 import { Link, useLocation } from "react-router-dom";
-import { PiCourtBasketballFill } from "react-icons/pi";
-import { FaCamera } from "react-icons/fa6";
-import { HiCurrencyRupee } from "react-icons/hi2";
+import { PiCourtBasketballLight } from "react-icons/pi";
 import { IoMdSettings } from "react-icons/io";
-import { Modal, ModalBody, ModalContent } from "@nextui-org/react";
 import UpdateDetailsModel from "./UpdateDetailsModel";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
@@ -20,7 +17,7 @@ const SideBar = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   return (
-    <div className="bg-[#424B96] w-[250px] min-h-[100vh] flex flex-col items-center text-white font-regular">
+    <div className="bg-[#508267] w-[250px] min-h-[100vh] flex flex-col items-center text-white font-regular">
       {/* <img src="Images/Logo.png" className="w-40 h-40" alt="logo" /> */}
       <div className="flex flex-col my-5 items-center">
         <div className="relative mt-5">
@@ -46,66 +43,58 @@ const SideBar = () => {
         <Link
           className={`${
             pathname === "/calendars"
-              ? "bg-[#C3BEF5] text-black rounded-r-full px-5 py-1 "
+              ? "bg-white text-black rounded-r-full px-5 py-1 "
               : ""
           } flex flex-row items-center gap-[6px] px-5 py-1 font-semibold`}
           to={"/calendars"}
         >
-          <HiOutlineCalendar className="text-2xl" /> Calendar
+          <HiOutlineCalendar className="text-xl" /> Calendar
         </Link>
         <Link
           className={`${
-            pathname === "/courts"
-              ? "bg-[#bfbbf0] text-black rounded-r-full"
-              : ""
+            pathname === "/courts" ? "bg-white text-black rounded-r-full" : ""
           } flex flex-row items-center gap-[6px] px-5 py-1 font-semibold`}
           to={"/courts"}
         >
-          <img className="color w-6" src="/Images/Court.svg" />
+          <PiCourtBasketballLight className="text-xl" />
           Courts
         </Link>
         <Link
           className={`${
-            pathname === "/payments"
-              ? "bg-[#bfbbf0] text-black rounded-r-full"
-              : ""
+            pathname === "/payments" ? "bg-white text-black rounded-r-full" : ""
           } flex flex-row items-center gap-[6px] px-5 py-1 font-semibold`}
           to={"/payments"}
         >
-          <HiCurrencyRupee className="text-2xl" />
+          <CiDollar className="text-xl" />
           Payments
         </Link>
         <Link
           className={`${
             pathname === "/customers"
-              ? "bg-[#bfbbf0] text-black rounded-r-full"
+              ? "bg-white text-black rounded-r-full"
               : ""
           } flex flex-row items-center gap-[6px] px-5 py-1 font-semibold`}
           to={"/customers"}
         >
-          <IoPersonSharp className="text-2xl" />
+          <LuUser2 className="text-xl" />
           Customers
         </Link>
         <Link
           className={`${
-            pathname === "/settings"
-              ? "bg-[#bfbbf0] text-black rounded-r-full"
-              : ""
+            pathname === "/settings" ? "bg-white text-black rounded-r-full" : ""
           } flex flex-row items-center gap-[6px] px-5 py-1 font-semibold`}
           to={"/settings"}
         >
-          <IoSettingsSharp className="text-2xl" />
+          <IoSettingsSharp className="text-xl" />
           Settings
         </Link>
         <Link
           className={`${
-            pathname === "/logout"
-              ? "bg-[#bfbbf0] text-black rounded-r-full"
-              : ""
+            pathname === "/logout" ? "bg-white text-black rounded-r-full" : ""
           } flex flex-row items-center gap-[6px] px-5 py-1 font-semibold`}
           to={"/logout"}
         >
-          <GoSignOut className="text-2xl" />
+          <GoSignOut className="text-xl" />
           Logout
         </Link>
       </div>
