@@ -3,11 +3,11 @@ import React, { useState } from "react";
 import CourtFilter from "../features/court/CourtFilter";
 import SingleCourtData from "../features/court/SingleCourtData";
 import { Court as CourtInter } from "../Types/Court";
+import { useSelector } from "react-redux";
 
 const Court = () => {
   const [selectedSport, setSelectedSport] = useState<string>("");
   const [AllCourts, setAllCourts] = useState<CourtInter[]>([]);
-
   return (
     <div>
       <div className="bg-[#508267] h-14 p-5 flex flex-row items-center justify-between">
@@ -31,16 +31,16 @@ const Court = () => {
           <Button>Add new court</Button>
         </div>
       </div>
-      <div className="flex flex-row gap-5 items-center">
-        <CourtFilter
-          AllCourts={AllCourts}
-          setAllCourts={setAllCourts}
-          selectedSport={selectedSport}
-        />
-        <div className="bg-no-repeat grid h-[100vh] place-items-center bg-cover CourtBGGG w-[60%] ">
-          <SingleCourtData setAllCourts={setAllCourts} />
-        </div>
-      </div>
+      <CourtFilter
+        AllCourts={AllCourts}
+        setAllCourts={setAllCourts}
+        selectedSport={selectedSport}
+      />
+      {/* <div className="bg-no-repeat grid h-[100vh] place-items-center bg-cover CourtBGGG w-[60%] ">
+        
+      </div> */}
+
+      <SingleCourtData setAllCourts={setAllCourts} />
     </div>
   );
 };

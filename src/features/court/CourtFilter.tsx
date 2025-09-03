@@ -38,7 +38,7 @@ const CourtFilter = ({
   return (
     <div className="h-[100vh] relative p-3">
       <p className="font-semibold text-xl mb-2">All Courts</p>
-      <div className="flex flex-col gap-3 overflow-x-hidden overflow-scroll max-h-[90vh] items-center">
+      <div className="grid grdi-cols-4 gap-4 overflow-x-hidden ">
         {FilteredCourt?.length > 0 ? (
           FilteredCourt.map((court) => (
             <SingleCourt key={court?._id} court={court} />
