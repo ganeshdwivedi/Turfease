@@ -1,0 +1,211 @@
+@import "tailwindcss";
+
+
+
+/* body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+} */
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --font-thin: "AleoThin";
+  --font-light: "AleoLight";
+  --font-regular: "AleoRegular";
+  --font-medium: 'AleoMedium';
+  --font-semibold: "AleoSemibold";
+  --font-bold: "AleoBold";
+}
+
+/* .fc-timegrid-slot {
+  background-color: lightgrey;
+} */
+
+.fc-business-hours {
+  /* background-color: white; */
+}
+
+@font-face {
+  font-family: 'AleoThin';
+  src: url('../public/fonts/Aleo-Thin.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'AleoLight';
+  src: url('../public/fonts/Aleo-Light.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'AleoMedium';
+  src: url('../public/fonts/Aleo-Medium.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'AleoSemiBold';
+  src: url('../public/fonts/Aleo-SemiBold.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'AleoBold';
+  src: url('../public/fonts/Aleo-Bold.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'AleoRegular';
+  src: url('../public/fonts/Aleo-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.fc-license-message {
+  display: none;
+}
+
+.CourtBGGG {
+  background-image: url('../public/Images/court.jpg');
+}
+
+.fc .fc-timegrid-col.fc-day-today {
+  background-color: unset;
+}
+
+.fc .fc-toolbar.fc-header-toolbar {
+  display: none;
+}
+
+.fc .fc-col-header-cell-cushion {
+  padding: 20px;
+  font-family: 'AleoBold';
+}
+
+.fc .fc-timegrid-axis-cushion,
+.fc .fc-timegrid-slot-label-cushion {
+  font-size: 13px;
+  font-family: 'AleoRegular';
+}
+
+.fc {
+  border-radius: 27px !important;
+  background-color: white !important;
+}
+
+
+.shadow-btn {
+  box-shadow: 2px 4px 4px 2px rgba(0, 0, 0, 0.07);
+}
+
+.shadow-btnInset {
+  box-shadow: 2px 4px 4px 2px rgba(0, 0, 0, 0.07) inset;
+}
+
+.fc-v-event {
+  border: 1px solid #508267;
+  display: block;
+  width: 102.5% !important;
+  border-radius: 4px !important;
+}
+
+.cancel {
+  background-color: #508267 !important;
+  color: black !important;
+}
+
+.cancel>.fc-event-main {
+  color: black !important;
+  font-family: AleoMedium !important;
+  padding-left: 5px !important;
+}
+
+.success {
+  background-color: #508267 !important;
+}
+
+.fc-event {
+  background-color: #d7f5e5;
+  overflow: hidden;
+}
+
+.fc-event>.fc-event-main {
+  color: black;
+}
+
+.success>.fc-event-main {
+  color: white !important;
+  font-family: AleoMedium !important;
+  padding-left: 5px !important;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+
+.rbc-calendar-page .rbc-time-view{
+  border-radius:16px ;
+  border:1px solid #E5E7EB !important;}
+
+.rbc-calendar-page .rbc-toolbar {
+  display: none !important;
+}
+
+.rbc-calendar-page .rbc-allday-cell {
+  display: none !important;
+}
+
+.rbc-calendar-page .rbc-time-content {
+ overflow: hidden;
+}
+
+
+/* --- Custom Sidebar Styling --- */
+
+/* 1. Ensure the menu itself uses the Sider's background color */
+.custom-sidebar .ant-menu {
+  background: #508267;
+}
+
+/* 2. Style for non-active menu items */
+.custom-sidebar .ant-menu-item {
+  color: rgba(255, 255, 255, 0.85);
+  /* Light text for readability */
+}
+
+/* .custom-sidebar .ant-menu-item:not(.ant-menu-item-selected):hover {
+  background-color: white;
+  color: aqua;
+} */
+
+/* 4. --- Active Menu Item Styling --- */
+.custom-sidebar .ant-menu-item-selected {
+  background-color: #ffffff !important;
+  color: #508267 !important;
+  font-weight: 600;
+}
+
+/* 5. Ensure the icon color matches the active text color */
+.custom-sidebar .ant-menu-item-selected .ant-menu-item-icon {
+  color: #508267;
+}
+
