@@ -44,8 +44,6 @@ const SettingsTableComponent: React.FC<TableQueryInjectedProps> = ({
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedAdmin, setSelectedAdmin] = useState<IGetAdmin | null>(null);
 
-  console.log(params, "params");
-
   const { data, isLoading } = useQuery({
     queryKey: ["GetAllAdmin", params],
     queryFn: async () => {

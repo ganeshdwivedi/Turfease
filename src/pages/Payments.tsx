@@ -87,11 +87,6 @@ const Payments = () => {
       dataIndex: "payment",
       key: "status",
       render: (payment: any) => {
-        console.log(
-          payment,
-          "payment---->",
-          payment?.remainingAmount === 0 ? "green" : "red"
-        );
         return (
           <Tag color={payment?.remainingAmount === 0 ? "green" : "red"}>
             {payment?.remainingAmount === 0 ? "Paid" : "Pending Payment"}
@@ -104,8 +99,6 @@ const Payments = () => {
       key: "actions",
     },
   ];
-
-  console.log(data, "data---->", watch());
 
   return (
     <div>

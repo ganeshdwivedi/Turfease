@@ -12,8 +12,6 @@ export default function DateCarousel({ value, onChange }: any) {
     );
   };
 
-  console.log("Current Date:", value.format("YYYY-MM-DD"));
-
   const goPrev = () => {
     onChange(value.subtract(1, "day"));
   };

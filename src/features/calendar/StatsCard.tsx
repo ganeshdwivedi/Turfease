@@ -8,7 +8,6 @@ interface StatsCardProps {
 
 const StatsCard = ({ selectedDate }: StatsCardProps) => {
   const { data, isLoading } = useGetPaymentStats({ selectedDate });
-  console.log("Stats Data:", data);
   return (
     <>
       {isLoading ? (

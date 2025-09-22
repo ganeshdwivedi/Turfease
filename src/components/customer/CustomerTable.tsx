@@ -53,8 +53,6 @@ const CustomerTable: React.FC<TableQueryInjectedProps> = ({
     setIsOpen(true);
   };
 
-  console.log(data, "customer data");
-
   const columns = [
     {
       title: "Name",

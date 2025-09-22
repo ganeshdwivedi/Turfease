@@ -33,15 +33,12 @@ export const CustomerSearchSelect: React.FC<CustomerSearchSelectProps> = ({
         params: { search },
       });
 
-      console.log(response, "res-->");
       return response?.data?.data;
     },
     staleTime: 1000 * 60 * 5,
     retry: false,
     refetchOnWindowFocus: false,
   });
-
-  console.log(data);
 
   return (
     <Select

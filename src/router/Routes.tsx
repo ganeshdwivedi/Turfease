@@ -39,7 +39,7 @@ const RequireAuth: React.FC<any> = ({ children }) => {
   if (loading) return <div>Loading...</div>;
 
   if (!isauthenticated) {
-    return <Navigate to="/signin" />;
+    return <Navigate to="/dashboard" />;
   }
 
   return children;
