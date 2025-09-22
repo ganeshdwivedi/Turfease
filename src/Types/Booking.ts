@@ -1,4 +1,3 @@
-import type { Dayjs } from "dayjs";
 import type { Customer } from "./Customer";
 import type { Payment } from "./Payment";
 
@@ -14,7 +13,7 @@ interface payment {
   totalAmount: number;
 }
 
-interface user {
+export interface user {
   name: string;
   email: string;
   _id: string;

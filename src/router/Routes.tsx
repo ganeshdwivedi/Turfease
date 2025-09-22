@@ -1,7 +1,6 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import Settings from "../pages/Settings";
-import ErrorElement from "../pages/ErrorElement";
 import MainPage from "../pages/MainPage";
 import Calendar from "../pages/Calendar";
 import Payments from "../pages/Payments";

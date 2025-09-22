@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import PopoverEvent from "./PopoverEvent";
 
 const RenderEventContent = ({ eventInfo }: { eventInfo: any }) => {
   const [popoverVisible, setPopoverVisible] = useState(false);
@@ -29,7 +28,6 @@ const RenderEventContent = ({ eventInfo }: { eventInfo: any }) => {
             <span className="font-bold capitalize">
               {extendedProps?.customer?.name}
             </span>
-            <PopoverEvent eventData={extendedProps} isOpen={popoverVisible} />
           </p>
           {/* Add your additional text or HTML here */}
         </div>
