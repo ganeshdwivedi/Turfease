@@ -5,7 +5,7 @@ import { Login } from "../api/User";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { updateAuthState } from "../redux/authSlice";
-import { Button, Checkbox, Form, Input, Modal } from "antd";
+import { Button, Checkbox, Form, Input, Modal, Alert } from "antd";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 
 interface FormInput {
@@ -38,6 +38,13 @@ export default function App() {
   return (
     <div className="!h-[100vh] !w-[100vw] bg-[url('https://img.freepik.com/premium-photo/young-girl-closed-tennis-court-with-ball-racket_489646-1290.jpg')] bg-no-repeat bg-center bg-cover">
       <Modal footer={null} title={"Log in"} open={true} centered>
+        <Alert
+          message="⚠️ Server Notice"
+          description="🚀 Hosted on Free Tier: Response times may be slower than usual (30–60s). Thanks for your patience 🙏"
+          type="warning"
+          showIcon
+          banner
+        />
         <>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Controller
