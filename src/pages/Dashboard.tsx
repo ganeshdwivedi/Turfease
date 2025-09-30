@@ -157,13 +157,13 @@ const Header = () => {
         </nav>
         <div className="hidden md:flex items-center space-x-4">
           <Link
-            to="/signin"
+            to="/club/signin"
             className="text-brand-green border border-brand-green rounded-full px-6 py-2 text-sm font-semibold hover:bg-brand-green hover:text-white transition duration-300"
           >
             Register Your Court
           </Link>
           <Link
-            to="#book-court"
+            to="/book/court"
             className="bg-brand-green text-white rounded-full px-6 py-2 text-sm font-semibold hover:opacity-90 transition duration-300 shadow-lg"
           >
             Book a Slot
@@ -199,7 +199,7 @@ const Header = () => {
           </Link>
           <div className="border-t border-gray-200 my-4"></div>
           <Link
-            to="/signin"
+            to="/club/signin"
             className="block w-full text-center text-brand-green border border-brand-green rounded-full px-6 py-2 text-sm font-semibold hover:bg-brand-green hover:text-white transition duration-300"
           >
             Register Your Court
@@ -231,13 +231,13 @@ const HeroSection = () => (
       </p>
       <div className="mt-10 flex flex-col sm:flex-row justify-center items-center gap-4">
         <Link
-          to="#plans"
+          to="/club/signin"
           className="w-full sm:w-auto text-brand-green border-2 border-brand-green rounded-full px-8 py-3 font-semibold hover:bg-brand-green hover:text-white transition duration-300 transform hover:scale-105"
         >
           I'm a Court Owner
         </Link>
         <Link
-          to="#book-court"
+          to="/book/court"
           className="w-full sm:w-auto bg-brand-green text-white rounded-full px-8 py-3 font-semibold hover:opacity-90 transition duration-300 shadow-lg transform hover:scale-105"
         >
           I'm a Player

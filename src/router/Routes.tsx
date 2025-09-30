@@ -11,6 +11,8 @@ import SignIn from "../pages/SignIn";
 import { jwtDecode } from "jwt-decode"; // Correct import
 import { useSelector } from "react-redux";
 import Dashboard from "../pages/Dashboard";
+import Register from "../pages/Register";
+import Plans from "../pages/Plans";
 // import { RootState } from "../redux/store";
 
 const RequireAuth: React.FC<any> = ({ children }) => {
@@ -58,18 +60,19 @@ const RequireAdminRole: React.FC<any> = ({ children }) => {
 const router = createBrowserRouter([
   {
     path: "/",
+    element: <Dashboard />,
+  },
+  {
+    path: "/club",
     element: (
       <RequireAuth>
         <Navigate to="/calendars" />
       </RequireAuth>
     ),
   },
+
   {
-    path: "/dashboard",
-    element: <Dashboard />,
-  },
-  {
-    path: "/",
+    path: "/club/",
     // errorElement: <ErrorElement />,
     element: (
       <RequireAuth>
@@ -82,6 +85,7 @@ const router = createBrowserRouter([
       { path: "courts", element: <Court /> },
       { path: "payments", element: <Payments /> },
       { path: "customers", element: <Customer /> },
+      { path: "plans", element: <Plans /> },
       {
         path: "settings",
         element: (
@@ -93,12 +97,16 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "/signin",
+    path: "/club/signin",
     element: <SignIn />,
   },
   {
+    path: "/club/register",
+    element: <Register />,
+  },
+  {
     path: "*",
-    element: <Calendar />, // Handle unknown routes gracefully
+    element: <Dashboard />,
   },
 ]);
 

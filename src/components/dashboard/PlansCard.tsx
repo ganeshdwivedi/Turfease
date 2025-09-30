@@ -36,7 +36,7 @@ const PlansCard = ({
         )}
       </p>
       <ul className="mt-8 space-y-4 text-gray-600 flex-grow">
-        {features.map((feature: any) => (
+        {features?.map((feature: any) => (
           <li key={feature} className="flex items-center">
             <MdCheckCircleOutline />
             {feature}

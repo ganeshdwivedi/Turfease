@@ -94,7 +94,7 @@ const MainPage: React.FC<any> = () => {
           className="!h-auto"
           theme="light"
           mode="inline"
-          onClick={(item) => navigate(`/${item?.key}`)}
+          onClick={(item) => navigate(`/club/${item?.key}`)}
           defaultSelectedKeys={[currentActiveKey]}
           items={sidebarItems}
         />

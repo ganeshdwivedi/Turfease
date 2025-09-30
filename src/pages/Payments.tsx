@@ -51,7 +51,8 @@ const Payments = () => {
       render: (_: any, record: any) => {
         return (
           <div>
-            {record?.startTime}-{record?.endTime}
+            {dayjs(record?.startTime, "HH:mm:ss").format("HH:mm a")}-{" "}
+            {dayjs(record?.endTime, "HH:mm:ss").format("HH:mm a")}
           </div>
         );
       },

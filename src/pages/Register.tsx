@@ -5,19 +5,37 @@ import { Login } from "../api/User";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { updateAuthState } from "../redux/authSlice";
-import { Button, Checkbox, Form, Input, Modal, Alert, message } from "antd";
-import { FaLock, FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
+import {
+  Button,
+  Checkbox,
+  Form,
+  Input,
+  Modal,
+  Alert,
+  message,
+  InputNumber,
+} from "antd";
+import {
+  FaLock,
+  FaRegEye,
+  FaRegEyeSlash,
+  FaRegUser,
+  FaUser,
+} from "react-icons/fa6";
 import { PiWarningFill } from "react-icons/pi";
 import { useMutation } from "@tanstack/react-query";
 import { apiCaller } from "../api/ApiCaller";
-import { MdEmail } from "react-icons/md";
+import { MdEmail, MdOutlinePhone } from "react-icons/md";
+import { FaPhoneAlt } from "react-icons/fa";
 
 interface FormInput {
   email: string;
   password: string;
+  name: string;
+  phone_number: number;
 }
 
-export default function App() {
+export default function Register() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [messageApi, contextHolder] = message.useMessage(); // ✅ add this
@@ -30,7 +48,7 @@ export default function App() {
 
   const { mutate, isPending } = useMutation({
     mutationFn: (apiData: { email: String; password: String }) =>
-      apiCaller.post("/auth/login", apiData),
+      apiCaller.post("/auth/register", apiData),
     onSuccess: ({ data: response }) => {
       messageApi.success("Logged in successfully!");
       localStorage.setItem("user", JSON.stringify(response.user));
@@ -48,11 +66,11 @@ export default function App() {
   return (
     <div className="!h-[100vh] !w-[100vw] bg-[url('https://img.freepik.com/premium-photo/young-girl-closed-tennis-court-with-ball-racket_489646-1290.jpg')] bg-no-repeat bg-center bg-cover">
       {contextHolder}
-      <Modal closeIcon={null} width={450} footer={null} open={true} centered>
+      <Modal footer={null} closeIcon={null} open={true} centered>
         <div className="text-center !mb-5">
           <h3 className="text-4xl font-bold text-brand-green">Courtify</h3>
           <p className="mt-2 text-gray-600 !text-lg">
-            Welcome back! Please sign in to your account.
+            Join Courtify and start managing your courts.
           </p>
         </div>
         <Alert
@@ -60,13 +78,60 @@ export default function App() {
           className="!border !border-yellow-500 !my-4 !p-2 !rounded-md"
           closable
           message="Server Notice"
-          description="Hosted on Free Tier: Response times may be slower than usual (30–50s). Thanks for your patience 🙏"
+          description=" Hosted on Free Tier: Response times may be slower than usual (30–50s). Thanks for your patience 🙏"
           type="warning"
           showIcon
           banner
         />
         <>
           <form onSubmit={handleSubmit(onSubmit)}>
+            <Controller
+              name="name"
+              control={control}
+              rules={{
+                required: "Name is required",
+              }}
+              render={({ field, fieldState }) => (
+                <Form.Item
+                  layout="vertical"
+                  label={"Name"}
+                  validateStatus={fieldState.error ? "error" : ""}
+                  help={fieldState.error?.message}
+                >
+                  <Input
+                    size="large"
+                    prefix={<FaUser className="text-xl !text-gray-300 " />}
+                    {...field}
+                    autoFocus
+                    placeholder="Enter your Name"
+                  />
+                </Form.Item>
+              )}
+            />
+            <Controller
+              name="phone_number"
+              control={control}
+              rules={{
+                required: "phone number is required",
+              }}
+              render={({ field, fieldState }) => (
+                <Form.Item
+                  layout="vertical"
+                  label={"Phone Number"}
+                  validateStatus={fieldState.error ? "error" : ""}
+                  help={fieldState.error?.message}
+                >
+                  <Input
+                    size="large"
+                    className="!w-full"
+                    prefix={<FaPhoneAlt className="text-xl !text-gray-300 " />}
+                    {...field}
+                    autoFocus
+                    placeholder="Enter your Phone Number"
+                  />
+                </Form.Item>
+              )}
+            />
             <Controller
               name="email"
               control={control}
@@ -131,18 +196,18 @@ export default function App() {
                 type="primary"
                 htmlType="submit"
               >
-                Sign in
+                Sign Up
               </Button>
             </div>
           </form>
         </>
         <p className="mt-6 text-center text-sm text-gray-600">
-          Don't have an account?{" "}
+          Already have an account?{" "}
           <Link
-            to={"/club/register"}
-            className="font-medium text-brand-green hover:!text-green-800 cursor-pointer"
+            to={"/club/signin"}
+            className="font-medium text-brand-green hover:!text-green-800"
           >
-            Sign up
+            Sign in
           </Link>
         </p>
       </Modal>

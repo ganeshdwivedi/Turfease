@@ -13,7 +13,10 @@ const breadcrumbNameMap: Record<string, string> = {
 
 const Breadcrumbs: React.FC = () => {
   const location = useLocation();
-  const pathSnippets = location.pathname.split("/").filter((i) => i);
+  const pathSnippets = location.pathname
+    .replace(/^\/club/, "") // strip "/club"
+    .split("/")
+    .filter((i) => i);
 
   // Build breadcrumb items dynamically
   const breadcrumbItems = [
@@ -21,7 +24,7 @@ const Breadcrumbs: React.FC = () => {
       key: "home",
       title: (
         <div>
-          <Link to="/calendars" className="hover:text-green-600">
+          <Link to="/club/dashboard" className="hover:text-green-600">
             Home
           </Link>
         </div>
