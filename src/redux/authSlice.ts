@@ -1,9 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
+import type { User } from "../Types/Customer";
 
 interface initialState {
   isLoggedIn: boolean;
-  user: any | null;
+  user: User | null;
 }
 const initialState = {
   isLoggedIn: false,

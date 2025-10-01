@@ -13,6 +13,11 @@ import { useSelector } from "react-redux";
 import Dashboard from "../pages/Dashboard";
 import Register from "../pages/Register";
 import Plans from "../pages/Plans";
+import Subscription from "../pages/Subscription";
+import CustomerRegister from "../pages/Customer/CustomerRegister";
+import CustomerSigin from "../pages/Customer/CustomerSignIn";
+import CustomerMainPage from "../pages/Customer/CustomerMainPage";
+import Book from "../pages/Customer/Book";
 // import { RootState } from "../redux/store";
 
 const RequireAuth: React.FC<any> = ({ children }) => {
@@ -80,6 +85,7 @@ const router = createBrowserRouter([
       </RequireAuth>
     ),
     children: [
+      { path: "subscription", element: <Subscription /> },
       { path: "calendars", element: <Calendar /> },
       { path: "logout", element: <Logout /> },
       { path: "courts", element: <Court /> },
@@ -97,12 +103,34 @@ const router = createBrowserRouter([
     ],
   },
   {
+    path: "/book/",
+    element: (
+      <RequireAuth>
+        <CustomerMainPage />
+      </RequireAuth>
+    ),
+    children: [
+      {
+        path: "courts",
+        element: <Book />,
+      },
+    ],
+  },
+  {
     path: "/club/signin",
     element: <SignIn />,
   },
   {
     path: "/club/register",
     element: <Register />,
+  },
+  {
+    path: "/customer/register",
+    element: <CustomerRegister />,
+  },
+  {
+    path: "/customer/signin",
+    element: <CustomerSigin />,
   },
   {
     path: "*",

@@ -3,66 +3,13 @@ import React from "react";
 import { IoCheckmarkCircleOutline } from "react-icons/io5";
 import { uploadApiCaller } from "../../api/uploadApiCaller";
 
-const loadRazorpayScript = () => {
-  return new Promise((resolve) => {
-    const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.onload = () => resolve(true);
-    script.onerror = () => resolve(false);
-    document.body.appendChild(script);
-  });
-};
+interface PlanCardProps {
+  plan: any;
+  className?: string;
+  handleSubscribe?: (plan: any) => void;
+}
 
-const PlanCard2 = ({ plan, className }: any) => {
-  const handleSubscribe = async (planId: string) => {
-    const loaded = await loadRazorpayScript();
-    if (!loaded) {
-      alert("Razorpay SDK failed to load");
-      return;
-    }
-    try {
-      // Step 1: Create subscription from backend
-      const { data } = await uploadApiCaller.post("create-subscription", {
-        planId,
-        customerEmail: "customer@example.com",
-        totalCount: 12,
-      });
-      console.log(data, "data--->");
-
-      const subscription = data.subscription;
-
-      // Step 2: Open Razorpay Checkout
-      const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID!,
-        subscription_id: subscription.id,
-        name: "Your Company Name",
-        description: subscription.item.name,
-        prefill: {
-          email: "customer@example.com",
-        },
-        theme: {
-          color: "#3399cc",
-        },
-        handler: async function (response: any) {
-          console.log(response, "res-->");
-          // Step 3: Verify payment on backend
-          // await axios.post("/api/subscription/verify-subscription", {
-          //   razorpay_payment_id: response.razorpay_payment_id,
-          //   razorpay_subscription_id: response.razorpay_subscription_id,
-          //   razorpay_signature: response.razorpay_signature,
-          // });
-          alert("Subscription successful!");
-        },
-      };
-
-      const rzp1 = new (window as any).Razorpay(options);
-      rzp1.open();
-    } catch (err) {
-      console.error(err);
-      alert("Subscription failed!");
-    }
-  };
-
+const PlanCard2 = ({ plan, className, handleSubscribe }: PlanCardProps) => {
   return (
     <div
       className={`border rounded-2xl p-6 text-left flex flex-col transition-all relative duration-300 bg-white shadow-sm hover:shadow-xl hover:-translate-y-1.5 ${
@@ -96,7 +43,7 @@ const PlanCard2 = ({ plan, className }: any) => {
       </ul>
       <Button
         onClick={() => {
-          handleSubscribe(plan?.razorpayPlanId);
+          handleSubscribe?.(plan);
         }}
         className="mt-5"
         type={plan.popular ? "primary" : "default"}

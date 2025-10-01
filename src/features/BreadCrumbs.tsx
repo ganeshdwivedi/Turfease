@@ -9,6 +9,9 @@ const breadcrumbNameMap: Record<string, string> = {
   "/customers": "Customers",
   "/settings": "Settings",
   "/logout": "Logout",
+  "/subscription": "Subscription",
+  "/plans": "Plans",
+  "/dashboard": "Dashboard",
 };
 
 const Breadcrumbs: React.FC = () => {

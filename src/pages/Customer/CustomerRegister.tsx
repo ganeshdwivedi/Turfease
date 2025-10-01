@@ -1,10 +1,15 @@
 import { CiLock, CiMail } from "react-icons/ci";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Login } from "../api/User";
-import { Link, useNavigate } from "react-router-dom";
+import { Login } from "../../api/User";
+import {
+  Link,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { updateAuthState } from "../redux/authSlice";
+import { updateAuthState } from "../../redux/authSlice";
 import {
   Button,
   Checkbox,
@@ -24,9 +29,10 @@ import {
 } from "react-icons/fa6";
 import { PiWarningFill } from "react-icons/pi";
 import { useMutation } from "@tanstack/react-query";
-import { apiCaller } from "../api/ApiCaller";
+import { apiCaller } from "../../api/ApiCaller";
 import { MdEmail, MdOutlinePhone } from "react-icons/md";
 import { FaPhoneAlt } from "react-icons/fa";
+import { uploadApiCaller } from "../../api/uploadApiCaller";
 
 interface FormInput {
   email: string;
@@ -35,10 +41,12 @@ interface FormInput {
   phone_number: number;
 }
 
-export default function Register() {
+export default function CustomerRegister() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const source = searchParams.get("utm") || "turfease"; // "chatbot"
   const [messageApi, contextHolder] = message.useMessage(); // ✅ add this
   const [isPasswordVisible, setisPasswordVisible] = useState<boolean>(false);
   const { register, control, watch, handleSubmit } = useForm<FormInput>();
@@ -48,24 +56,25 @@ export default function Register() {
   };
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (apiData: { email: String; password: String }) =>
-      apiCaller.post("/auth/register", apiData),
+    mutationFn: (apiData: any) =>
+      uploadApiCaller.post("/app/auth/register", { ...apiData, source }),
     onSuccess: ({ data: response }) => {
       messageApi.success("Logged in successfully!");
       localStorage.setItem("user", JSON.stringify(response.user));
       localStorage.setItem("accessToken", response.token);
       dispatch(updateAuthState({ isLoggedIn: true, user: response.user }));
       setTimeout(() => {
-        navigate("/club/calendars");
+        navigate("/book/courts");
       }, 500);
     },
     onError: (error: any) => {
       messageApi.error(error?.response?.data?.error);
     },
   });
+  console.log(source, "params-->params");
 
   return (
-    <div>
+    <div className="!h-[100vh] !w-[100vw] bg-[url('https://img.freepik.com/premium-photo/young-girl-closed-tennis-court-with-ball-racket_489646-1290.jpg')] bg-no-repeat bg-center bg-cover">
       {contextHolder}
       <Modal footer={null} closeIcon={null} open={true} centered>
         <div className="text-center !mb-5">

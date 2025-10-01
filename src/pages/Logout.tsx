@@ -8,12 +8,12 @@ const Logout = () => {
   useEffect(() => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("user");
-    // dispatch(
-    //   updateAuthState({
-    //     isLoggedIn: false,
-    //     user: null,
-    //   })
-    // );
+    dispatch(
+      updateAuthState({
+        isLoggedIn: false,
+        user: null,
+      })
+    );
   }, []);
 
   return <div></div>;
