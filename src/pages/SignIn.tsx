@@ -1,9 +1,9 @@
 import { CiLock, CiMail } from "react-icons/ci";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Login } from "../api/User";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { updateAuthState } from "../redux/authSlice";
 import { Button, Checkbox, Form, Input, Modal, Alert, message } from "antd";
 import { FaLock, FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
@@ -11,6 +11,7 @@ import { PiWarningFill } from "react-icons/pi";
 import { useMutation } from "@tanstack/react-query";
 import { apiCaller } from "../api/ApiCaller";
 import { MdEmail } from "react-icons/md";
+import type { RootState } from "../redux/store";
 
 interface FormInput {
   email: string;
@@ -23,7 +24,9 @@ export default function App() {
   const [messageApi, contextHolder] = message.useMessage(); // ✅ add this
   const [isPasswordVisible, setisPasswordVisible] = useState<boolean>(false);
   const { register, control, watch, handleSubmit } = useForm<FormInput>();
-
+  const isauthenticated = useSelector(
+    (state: RootState) => state.auth.isLoggedIn
+  );
   const onSubmit = async (data: FormInput) => {
     mutate(data);
   };
@@ -44,6 +47,12 @@ export default function App() {
       messageApi.error(error?.response?.data?.error);
     },
   });
+
+  useEffect(() => {
+    if (isauthenticated) {
+      navigate("/club/calendars");
+    }
+  }, [isauthenticated]);
 
   return (
     <div className="!h-[100vh] !w-[100vw] bg-[url('https://img.freepik.com/premium-photo/young-girl-closed-tennis-court-with-ball-racket_489646-1290.jpg')] bg-no-repeat bg-center bg-cover">

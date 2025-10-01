@@ -1,9 +1,9 @@
 import { CiLock, CiMail } from "react-icons/ci";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Login } from "../api/User";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { updateAuthState } from "../redux/authSlice";
 import {
   Button,
@@ -27,6 +27,7 @@ import { useMutation } from "@tanstack/react-query";
 import { apiCaller } from "../api/ApiCaller";
 import { MdEmail, MdOutlinePhone } from "react-icons/md";
 import { FaPhoneAlt } from "react-icons/fa";
+import type { RootState } from "../redux/store";
 
 interface FormInput {
   email: string;
@@ -38,7 +39,9 @@ interface FormInput {
 export default function Register() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+  const isauthenticated = useSelector(
+    (state: RootState) => state.auth.isLoggedIn
+  );
   const [messageApi, contextHolder] = message.useMessage(); // ✅ add this
   const [isPasswordVisible, setisPasswordVisible] = useState<boolean>(false);
   const { register, control, watch, handleSubmit } = useForm<FormInput>();
@@ -63,6 +66,12 @@ export default function Register() {
       messageApi.error(error?.response?.data?.error);
     },
   });
+
+  useEffect(() => {
+    if (isauthenticated) {
+      navigate("/club/calendars");
+    }
+  }, [isauthenticated]);
 
   return (
     <div>
