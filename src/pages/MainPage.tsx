@@ -77,9 +77,14 @@ const MainPage: React.FC<any> = () => {
       </div>
 
       <Menu
+          theme="dark"   // 👈 dark theme (white text, transparent bg)
+  mode="inline"
+  style={{
+    backgroundColor: "#508267", // 👈 match drawer bg
+    color: "white",
+    borderRight: "none",
+  }}
         className="!h-auto"
-        theme="light"
-        mode="inline"
         onClick={(item) => {
           navigate(`/club/${item?.key}`);
           if (isMobile) setDrawerOpen(false); // auto close drawer on mobile
