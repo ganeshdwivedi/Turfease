@@ -14,7 +14,7 @@ const SingleCourt = ({ court }: { court: Court }) => {
   return (
     <Card
       key={court._id}
-      className="bg-white hover:shadow-xl w-[350px] !p-0 shadow-md flex flex-col gap-2 rounded-[16px]"
+      className="bg-white hover:shadow-xl w-[350px] !p-0 shadow-md flex flex-col gap-2 rounded-xl overflow-hidden transition duration-300 transform hover:scale-[1.01] hover:shadow-2xl"
     >
       <div className="w-full h-[180px]">
         <img
