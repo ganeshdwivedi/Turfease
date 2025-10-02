@@ -106,11 +106,12 @@ const MainPage: React.FC<any> = () => {
       ) : (
         // Mobile Drawer
         <Drawer
+          className="!min-w-[230px] !w-[70%]"
           placement="left"
           onClose={() => setDrawerOpen(false)}
           open={drawerOpen}
           closable={false}
-          bodyStyle={{ padding: 0 }}
+          bodyStyle={{ padding: 0 ,backgroundColor: "#508267",}}
         >
           {SidebarContent}
         </Drawer>
