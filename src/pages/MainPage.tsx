@@ -37,7 +37,7 @@ const MainPage: React.FC<any> = () => {
 
   useEffect(() => {
     const handleOffline = () => {
-      message.error("Looks Like you are Offline);
+      message.error("Looks Like you are Offline");
       // show offline notification here if needed
     };
     window.addEventListener("offline", handleOffline);
