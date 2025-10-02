@@ -153,7 +153,7 @@ const SettingsTableComponent: React.FC<TableQueryInjectedProps> = ({
       </div>
 
       <Table
-         { scroll={{ x: 700 }}
+         scroll={{ x: 700 }}
         rowKey="_id"
         pagination={{
           current: params.offset,
