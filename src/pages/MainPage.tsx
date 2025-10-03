@@ -30,7 +30,7 @@ const MainPage: React.FC<any> = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const navigate = useNavigate();
-  const currentActiveKey = pathname.split("/")[1] || "calendar";
+  const currentActiveKey = pathname.split("/")[2] || "calendar";
 
   const screens = useBreakpoint();
   const isMobile = !screens.md; // md breakpoint and below = mobile/tablet
