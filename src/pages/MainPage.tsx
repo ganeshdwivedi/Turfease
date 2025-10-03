@@ -31,6 +31,7 @@ const MainPage: React.FC<any> = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const navigate = useNavigate();
   const currentActiveKey = pathname.split("/")[2] || "calendar";
+  console.log(currentActiveKey,"currentActive",sidebarItems);
 
   const screens = useBreakpoint();
   const isMobile = !screens.md; // md breakpoint and below = mobile/tablet
@@ -77,16 +78,16 @@ const MainPage: React.FC<any> = () => {
       </div>
 
       <Menu
-          theme="dark"   // 👈 dark theme (white text, transparent bg)
-  mode="inline"
-  style={{
-    backgroundColor: "#508267", // 👈 match drawer bg
-    color: "white",
-    borderRight: "none",
-  }}
+        theme="dark"   // 👈 dark theme (white text, transparent bg)
+        mode="inline"
+        style={{
+          backgroundColor: "#508267", // 👈 match drawer bg
+          color: "white",
+          borderRight: "none",
+        }}
         className="!h-auto"
         onClick={(item) => {
-          navigate(`/club/${item?.key}`);
+          navigate(item?.path);
           if (isMobile) setDrawerOpen(false); // auto close drawer on mobile
         }}
         defaultSelectedKeys={[currentActiveKey]}
