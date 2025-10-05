@@ -8,31 +8,31 @@ import { PiCourtBasketballLight } from "react-icons/pi";
 export const sidebarItems = [
   {
     key: "calendars",
-    path: "/calendars",
+    path: "/club/calendars",
     icon: <HiOutlineCalendar className="!text-xl" />,
     label: "Calendar",
   },
   {
     key: "courts",
-    path: "/courts",
+    path: "/club/courts",
     icon: <PiCourtBasketballLight className="!text-xl" />,
     label: "Courts",
   },
   {
     key: "payments",
-    path: "/payments",
+    path: "/club/payments",
     icon: <CiDollar className="!text-xl" />,
     label: "Payments",
   },
   {
     key: "customers",
-    path: "/customers",
+    path: "/club/customers",
     icon: <LuUser className="!text-xl" />,
     label: "Customers",
   },
   {
     key: "settings",
-    path: "/settings",
+    path: "/club/settings",
     icon: <IoSettingsSharp className="!text-xl" />,
     label: "Settings",
   },

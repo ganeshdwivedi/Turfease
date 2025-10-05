@@ -241,7 +241,7 @@ export default function CalendarPage() {
   return (
     <Fragment>
       <Row>
-        <Col span={12}>
+        <Col sm={24} md={12} >
           <DatePicker
             allowClear={false}
             format={"DD MMMM YYYY"}
@@ -255,7 +255,7 @@ export default function CalendarPage() {
             onChange={(date: any) => setSelectedDate(date)}
           />
         </Col>
-        <Col span={12}>
+        <Col sm={24} md={12} >
           <StatsCard selectedDate={selectedDate} />
         </Col>
       </Row>

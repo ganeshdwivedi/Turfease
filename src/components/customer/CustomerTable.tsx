@@ -135,6 +135,7 @@ const CustomerTable: React.FC<TableQueryInjectedProps> = ({
         </Button>
       </div>
       <Table
+         scroll={{ x: 700 }}
         rowKey="_id"
         pagination={{
           current: params.offset,

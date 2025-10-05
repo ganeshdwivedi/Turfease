@@ -88,7 +88,7 @@ const SettingsTableComponent: React.FC<TableQueryInjectedProps> = ({
         return (
           <div>
             <Badge count={turfLength} overflowCount={9}>
-              <Typography.Text>{datd?.turf[0].courtName}</Typography.Text>
+              <Typography.Text>{datd?.turf?.[0]?.courtName}</Typography.Text>
             </Badge>
           </div>
         );
@@ -153,6 +153,7 @@ const SettingsTableComponent: React.FC<TableQueryInjectedProps> = ({
       </div>
 
       <Table
+         scroll={{ x: 700 }}
         rowKey="_id"
         pagination={{
           current: params.offset,
