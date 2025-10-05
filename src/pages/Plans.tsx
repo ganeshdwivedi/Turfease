@@ -6,31 +6,7 @@ import { Button, Skeleton } from "antd";
 import { useQuery } from "@tanstack/react-query";
 import { apiCaller } from "../api/ApiCaller";
 
-const plans = [
-  {
-    planName: "Pro Monthly",
-    amount: 9900, // in cents
-    currency: "USD",
-    interval: 1,
-    period: "monthly",
-    features: [
-      "Up to 20 Courts",
-      "Advanced Analytics",
-      "AI Insights",
-      "Priority Support",
-    ],
-    popular: true,
-  },
-  {
-    planName: "Starter Monthly",
-    amount: 4900,
-    currency: "USD",
-    interval: 1,
-    period: "monthly",
-    features: ["Up to 5 Courts", "Basic Analytics", "Standard Support"],
-    popular: false,
-  },
-];
+
 const Plans = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { data, isLoading } = useQuery({

@@ -1,38 +1,107 @@
-import React from "react";
+import { useQuery } from "@tanstack/react-query";
+import React, { useState } from "react";
+import { apiCaller } from "../../api/ApiCaller";
+import { uploadApiCaller } from "../../api/uploadApiCaller";
+import CourtSlotBookCard from "../../components/court/CourtSlotBookCard";
+import DateCarousel from "../../features/calendar/DateCrousel";
+import dayjs, { Dayjs } from "dayjs";
+import { Input, Select } from "antd";
+import { Controller, useForm } from "react-hook-form";
+import { DebouncedInput } from "../../components/settings/DebounceInput";
 
+interface FormState {
+  selectedDate: Dayjs;
+  duration: number;
+  search: string;
+  sports: string;
+}
 const Book = () => {
-  const court = {
-    id: 2,
-    name: "City Hoops Arena",
-    location: "Brooklyn, NY",
-    sport: "Basketball",
-    image:
-      "https://images.unsplash.com/photo-1574629810360-14b9d3c03c2a?q=80&w=1974&auto=format&fit=crop",
-    price: 50,
-    bookedSlots: {
-      "2025-10-01": ["11:00 AM", "03:00 PM"],
-      "2025-10-03": ["10:00 AM", "01:00 PM", "05:00 PM"],
+  const { control, watch } = useForm<FormState>({
+    defaultValues: {
+      selectedDate: dayjs(),
+      duration: 60,
     },
-  };
+  });
+  const { selectedDate, search, duration, sports } = watch();
+
+  const { data } = useQuery({
+    queryKey: ["getSlotsByDate", selectedDate, search, duration, sports],
+    queryFn: async () => {
+      const params = [
+        `date=${selectedDate.format("YYYY-MM-DD")}`,
+        `duration=${duration}`,
+      ];
+      if (search) {
+        params.push(`search=${search}`);
+      }
+      if (sports) {
+        params.push(`sport=${sports}`);
+      }
+      const response = await uploadApiCaller.get(
+        `/app/bookable-slots?${params.join("&")}`
+      );
+      return response?.data?.courts;
+    },
+    staleTime: 1000 * 60 * 5,
+    retry: false,
+    refetchOnWindowFocus: false,
+    enabled: !!selectedDate,
+  });
+
+  console?.log(data, "data");
   return (
     <div>
-      <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 transition-shadow hover:shadow-xl">
-        {/* <img
-          src={court.image}
-          alt={court.name}
-          className="w-full h-48 object-cover"
-        /> */}
-        <div className="p-6">
-          <h3 className="text-xl font-bold text-gray-800">{court.name}</h3>
-          <p className="text-sm text-gray-500 mt-1">
-            {court.location} • {court.sport}
-          </p>
-          <div className="mt-4 pt-4 border-t border-gray-100">
-            <p className="text-sm font-semibold text-gray-600 mb-3">
-              Available Slots for 22/290:
-            </p>
-          </div>
-        </div>
+      <div className="grid gap-5 lg:grid-cols-3 grid-cols-1">
+        <Controller
+          control={control}
+          name="selectedDate"
+          render={({ field: { value, onChange } }) => (
+            <DateCarousel value={value} onChange={onChange} />
+          )}
+        />
+        <Controller
+          name="search"
+          control={control}
+          render={({ field: { onChange, ...field } }) => (
+            <DebouncedInput
+              onDebounce={onChange}
+              {...field}
+              placeholder="Search court"
+            />
+          )}
+        />
+        <Controller
+          name="sports"
+          control={control}
+          render={({ field: { onChange, ...field } }) => (
+            <DebouncedInput
+              onDebounce={onChange}
+              {...field}
+              placeholder="Search Sport"
+            />
+          )}
+        />
+        <Controller
+          name="duration"
+          control={control}
+          render={({ field }) => (
+            <Select
+              {...field}
+              placeholder="select a time"
+              className="!w-full"
+              options={[
+                { label: "30 min", value: 30 },
+                { label: "60 min", value: 60 },
+                { label: "90 min", value: 90 },
+              ]}
+            />
+          )}
+        />
+      </div>
+      <div className="lg:grid-cols-2 grid-cols-1 xl:grid-cols-3 grid gap-6 mt-4">
+        {data?.map((item: any) => (
+          <CourtSlotBookCard key={item?.courtId} courtData={item} />
+        ))}
       </div>
     </div>
   );

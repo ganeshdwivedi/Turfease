@@ -33,11 +33,11 @@ const localizer = momentLocalizer(moment);
 const switchBUtton = {
   cursor: "pointer",
   background: "white",
-  boxShadow: { xs: "0px 4px 4px 0px #0000000D inset", sm: "none" },
+  boxShadow: "0px 4px 4px 0px #0000000D inset",
   borderRadius: "7px",
-  padding: { xs: "5px", sm: "0px" },
-  width: { xs: "70px", sm: "auto" },
-  height: { xs: "36px", sm: "auto" },
+  padding: "5px",
+  width: "70px",
+  height: "36px",
 };
 
 let formats = {
@@ -45,18 +45,17 @@ let formats = {
 };
 
 const arrows = {
-  position: "absolute",
+  // position: "absolute",
   top: "55%",
   zIndex: "99",
   cursor: "pointer",
   height: "60px",
-  display: { xs: "block", md: "none" },
+  display: "block",
   background: "white",
   borderRadius: "4px",
   padding: "21px 2.2px",
   border: "1px solid #EEEFEE",
   color: "#22356D",
-  boxSizing: "border-box",
   boxShadow: "4px 4px 4px 0px #0000000D",
 };
 
@@ -64,7 +63,7 @@ export default function CalendarPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [viewPort, setViewPort] = useState("Laptop");
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [visibleCourts, setVisibleCourts] = useState([0, 8]);
+  const [visibleCourts, setVisibleCourts] = useState([0, 4]);
   const [event, setEvent] = useState(null);
   const [search, setSearch] = useState(""); // customer search in create modal
   const {
@@ -79,6 +78,7 @@ export default function CalendarPage() {
     isError: CourtsError,
     refetch: CourtsREfetch,
   } = useGetAllCourts();
+  const totalCourts = CourtsData?.length || 0;
 
   const CustomEvent = ({ event }: { event: any }) => {
     return (
@@ -158,76 +158,76 @@ export default function CalendarPage() {
     }
   }, [selectedDate, elements]);
 
-  //   const handleNext = () => {
-  //     if (viewPort === "Mobile") {
-  //       const newStart = visibleCourts[1] + 1;
-  //       const newEnd = Math.min(visibleCourts[1] + 1, totalCourts - 1);
-  //       if (newStart <= totalCourts - 1) {
-  //         setVisibleCourts([newStart, newEnd]);
-  //       }
-  //     } else if (viewPort === "Tablet") {
-  //       const newStart = visibleCourts[1] + 1;
-  //       const newEnd = Math.min(visibleCourts[1] + 3, totalCourts - 1);
-  //       if (newStart <= totalCourts - 1) {
-  //         setVisibleCourts([newStart, newEnd]);
-  //       }
-  //     } else if (viewPort === "Large") {
-  //       const newStart = visibleCourts[1] + 1;
-  //       const newEnd = Math.min(visibleCourts[1] + 5, totalCourts - 1);
-  //       if (newStart <= totalCourts - 1) {
-  //         setVisibleCourts([newStart, newEnd]);
-  //       }
-  //     } else {
-  //       const newStart = visibleCourts[1] + 1;
-  //       const newEnd = Math.min(newStart + 8, totalCourts - 1);
-  //       if (newStart <= totalCourts - 1) {
-  //         setVisibleCourts([newStart, newEnd]);
-  //       }
-  //     }
-  //   };
+  const handleNext = () => {
+    if (viewPort === "Mobile") {
+      const newStart = visibleCourts[1] + 1;
+      const newEnd = Math.min(visibleCourts[1] + 1, totalCourts - 1);
+      if (newStart <= totalCourts - 1) {
+        setVisibleCourts([newStart, newEnd]);
+      }
+    } else if (viewPort === "Tablet") {
+      const newStart = visibleCourts[1] + 1;
+      const newEnd = Math.min(visibleCourts[1] + 2, totalCourts - 1);
+      if (newStart <= totalCourts - 1) {
+        setVisibleCourts([newStart, newEnd]);
+      }
+    } else if (viewPort === "Large") {
+      const newStart = visibleCourts[1] + 1;
+      const newEnd = Math.min(visibleCourts[1] + 3, totalCourts - 1);
+      if (newStart <= totalCourts - 1) {
+        setVisibleCourts([newStart, newEnd]);
+      }
+    } else {
+      const newStart = visibleCourts[1] + 1;
+      const newEnd = Math.min(newStart + 4, totalCourts - 1);
+      if (newStart <= totalCourts - 1) {
+        setVisibleCourts([newStart, newEnd]);
+      }
+    }
+  };
 
-  //   const handlePrev = () => {
-  //     if (viewPort === "Mobile") {
-  //       const newEnd = visibleCourts[0] - 1;
-  //       const newStart = Math.max(visibleCourts[0] - 1, 0);
-  //       if (newEnd >= 0) {
-  //         setVisibleCourts([newStart, newEnd]);
-  //       }
-  //     } else if (viewPort === "Tablet") {
-  //       const newEnd = visibleCourts[0] - 1;
-  //       const newStart = Math.max(visibleCourts[0] - 3, 0);
-  //       if (newEnd >= 0) {
-  //         setVisibleCourts([newStart, newEnd]);
-  //       }
-  //     } else if (viewPort === "Large") {
-  //       const newEnd = visibleCourts[0] - 1;
-  //       const newStart = Math.max(visibleCourts[0] - 5, 0);
-  //       if (newEnd >= 0) {
-  //         setVisibleCourts([newStart, newEnd]);
-  //       }
-  //     } else {
-  //       const newEnd = visibleCourts[0] - 1;
-  //       const newStart = Math.max(newEnd - 8, 0);
-  //       if (newEnd >= 0) {
-  //         setVisibleCourts([newStart, newEnd]);
-  //       }
-  //     }
-  //   };
+  const handlePrev = () => {
+    if (viewPort === "Mobile") {
+      const newEnd = visibleCourts[0] - 1;
+      const newStart = Math.max(visibleCourts[0] - 1, 0);
+      if (newEnd >= 0) {
+        setVisibleCourts([newStart, newEnd]);
+      }
+    } else if (viewPort === "Tablet") {
+      const newEnd = visibleCourts[0] - 1;
+      const newStart = Math.max(visibleCourts[0] - 3, 0);
+      if (newEnd >= 0) {
+        setVisibleCourts([newStart, newEnd]);
+      }
+    } else if (viewPort === "Large") {
+      const newEnd = visibleCourts[0] - 1;
+      const newStart = Math.max(visibleCourts[0] - 5, 0);
+      if (newEnd >= 0) {
+        setVisibleCourts([newStart, newEnd]);
+      }
+    } else {
+      const newEnd = visibleCourts[0] - 1;
+      const newStart = Math.max(newEnd - 8, 0);
+      if (newEnd >= 0) {
+        setVisibleCourts([newStart, newEnd]);
+      }
+    }
+  };
 
   useEffect(() => {
     const handleResize = () => {
       if (window.matchMedia("(max-width: 600px)").matches) {
         setViewPort("Mobile");
-        setVisibleCourts([0, 0]);
+        setVisibleCourts([0, 1]);
       } else if (window.matchMedia("(max-width: 1050px)").matches) {
         setViewPort("Tablet");
         setVisibleCourts([0, 3]);
       } else if (window.matchMedia("(max-width: 1450px)").matches) {
         setViewPort("Large");
-        setVisibleCourts([0, 5]);
+        setVisibleCourts([0, 4]);
       } else {
         setViewPort("Laptop");
-        setVisibleCourts([0, 8]);
+        setVisibleCourts([0, 5]);
       }
     };
 
@@ -237,6 +237,12 @@ export default function CalendarPage() {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+  console.log(
+    CourtsData?.slice(visibleCourts[0], visibleCourts[1]),
+    "visibleCourt",
+    visibleCourts
+  );
 
   return (
     <Fragment>
@@ -269,63 +275,63 @@ export default function CalendarPage() {
             } as React.CSSProperties
           }
         >
-          {/* {courtList?.length > (viewPort === "Tablet" ? 4 : isMobile ? 0 : 6) &&
-          visibleCourts[0] !== 0 && (
-            <div
-             
-              style={{
-                ...switchBUtton,
-                zIndex: "99",
-                cursor: "pointer",
-                left: '4%',
-                position:'absolute',
-                top: "1.5%",
-              }}
-              onClick={handlePrev}
-            >
-              <SlArrowLeft
-                style={{ color: "#22356D" }}
-                className="switch-icon"
-              />
-            </div>
-          )} */}
-          {/* {courtList?.length > (viewPort === "Tablet" ? 4 : isMobile ? 0 : 6) &&
-          visibleCourts[1] !== totalCourts - 1 && (
-            <div
-              position="absolute"
-              sx={{
-                ...switchBUtton,
-                zIndex: "99",
-                cursor: "pointer",
-                right: "2%",
-                top: "1.5%",
-              }}
-              onClick={handleNext}
-            >
-              <SlArrowRight
-                style={{ color: "#22356D" }}
-                className="switch-icon"
-              />
-            </div>
-          )} */}
+          {CourtsData?.length >
+            (viewPort === "Tablet" ? 4 : viewPort === "Mobile" ? 0 : 6) &&
+            visibleCourts[0] !== 0 && (
+              <div
+                style={{
+                  ...switchBUtton,
+                  zIndex: "99",
+                  cursor: "pointer",
+                  left: "4%",
+                  position: "absolute",
+                  top: "1.5%",
+                }}
+                onClick={handlePrev}
+              >
+                <SlArrowLeft
+                  style={{ color: "#22356D" }}
+                  className="switch-icon"
+                />
+              </div>
+            )}
+          {CourtsData?.length >
+            (viewPort === "Tablet" ? 4 : viewPort === "Mobile" ? 0 : 6) &&
+            visibleCourts[1] !== totalCourts - 1 && (
+              <div
+                style={{
+                  ...switchBUtton,
+                  zIndex: "99",
+                  cursor: "pointer",
+                  right: "2%",
+                  top: "1.5%",
+                }}
+                onClick={handleNext}
+              >
+                <SlArrowRight
+                  style={{ color: "#22356D" }}
+                  className="switch-icon"
+                />
+              </div>
+            )}
 
           {/* arrow for mobile view only */}
-          {/* {courtList?.length > 0 && visibleCourts[0] !== 0 && (
-          <Box
-            sx={{ ...arrows, zIndex: "99", left: { xs: "-3%", sm: "6%" } }}
-            onClick={handlePrev}
-          >
-            <SlArrowLeft style={{ color: "#22356D" }} />
-          </Box>
-        )} */}
-          {/* {courtList?.length > 0 && visibleCourts[1] !== totalCourts - 1 && (
-          <Box
-            sx={{ ...arrows, zIndex: "99", right: { xs: "-3%", sm: "-2%" } }}
-            onClick={handleNext}
-          >
-            <SlArrowRight style={{ color: "#22356D" }} />
-          </Box>
-        )} */}
+          {CourtsData?.length > 0 && visibleCourts[0] !== 0 && (
+            <div
+              style={{ ...arrows, zIndex: "99", left: "6%" }}
+              onClick={handlePrev}
+            >
+              <SlArrowLeft style={{ color: "#22356D" }} />
+            </div>
+          )}
+          {CourtsData?.length > 0 && visibleCourts[1] !== totalCourts - 1 && (
+            <div
+              style={{ ...arrows, zIndex: "99", right: "-2%" }}
+              onClick={handleNext}
+            >
+              <SlArrowRight style={{ color: "#22356D" }} />
+            </div>
+          )}
           {/* ---- ends here ---- */}
           <Calendar
             className="rbc-calendar-page"
@@ -342,7 +348,7 @@ export default function CalendarPage() {
             endAccessor="endTime"
             min={new Date(2025, 8, 4, 0, 0, 0)}
             max={new Date(2025, 8, 4, 23, 59, 59)}
-            resources={CourtsData}
+            resources={CourtsData?.slice(visibleCourts[0], visibleCourts[1])}
             resourceTitleAccessor={(resource: any) => {
               return (
                 <div>

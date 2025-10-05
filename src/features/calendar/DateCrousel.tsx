@@ -1,10 +1,15 @@
 import React, { useState } from "react";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { Button } from "antd";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-export default function DateCarousel({ value, onChange }: any) {
+interface DateCrouselProps {
+  value: Dayjs;
+  onChange: (value: Dayjs) => void;
+}
+
+export default function DateCarousel({ value, onChange }: DateCrouselProps) {
   // Generate 5 dates centered on currentDate
   const getDates = () => {
     return [...Array(5)].map(
