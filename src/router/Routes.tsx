@@ -114,6 +114,18 @@ const router = createBrowserRouter([
         path: "courts",
         element: <Book />,
       },
+      {
+        path: "signin",
+        element: <CustomerSigin />,
+      },
+      {
+        path: "register",
+        element: <CustomerRegister />,
+      },
+      {
+        path: "profile",
+        element: <Book />,
+      },
     ],
   },
   {

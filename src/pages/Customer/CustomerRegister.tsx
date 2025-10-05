@@ -74,13 +74,16 @@ export default function CustomerRegister() {
   console.log(source, "params-->params");
 
   return (
-    <div className="!h-[100vh] !w-[100vw] bg-[url('https://img.freepik.com/premium-photo/young-girl-closed-tennis-court-with-ball-racket_489646-1290.jpg')] bg-no-repeat bg-center bg-cover">
-      {contextHolder}
-      <Modal footer={null} closeIcon={null} open={true} centered>
+    <div className=" flex justify-center items-center mt-5">
+      <div className="!h-full !w-[450px] !p-5 shadow-2xl rounded-2xl">
+        {contextHolder}
         <div className="text-center !mb-5">
           <h3 className="text-4xl font-bold text-brand-green">Courtify</h3>
-          <p className="mt-2 text-gray-600 !text-lg">
-            Join Courtify and start managing your courts.
+          <h2 className="uppercase !text-xl text-start font-semibold mt-2">
+            Join the Game
+          </h2>
+          <p className="mt-1 text-gray-600 !text-lg text-start">
+            Create your account to start booking.
           </p>
         </div>
         <Alert
@@ -220,7 +223,7 @@ export default function CustomerRegister() {
             Sign in
           </Link>
         </p>
-      </Modal>
+      </div>
     </div>
   );
 }

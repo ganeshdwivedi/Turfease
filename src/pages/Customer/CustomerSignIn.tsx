@@ -47,13 +47,13 @@ export default function CustomerSigin() {
   });
 
   return (
-    <div className="!h-[100vh] !w-[100vw] bg-[url('https://img.freepik.com/premium-photo/young-girl-closed-tennis-court-with-ball-racket_489646-1290.jpg')] bg-no-repeat bg-center bg-cover">
-      {contextHolder}
-      <Modal closeIcon={null} width={450} footer={null} open={true} centered>
+    <div className=" flex justify-center items-center">
+      <div className="!w-[450px] !h-full shadow-2xl rounded-2xl !p-5">
+        {contextHolder}
         <div className="text-center !mb-5">
           <h3 className="text-4xl font-bold text-brand-green">Courtify</h3>
           <p className="mt-2 text-gray-600 !text-lg">
-            Welcome back! Please sign in to your account.
+            Welcome back! Let's get you on the court.
           </p>
         </div>
         <Alert
@@ -146,7 +146,7 @@ export default function CustomerSigin() {
             Sign up
           </Link>
         </p>
-      </Modal>
+      </div>
     </div>
   );
 }
