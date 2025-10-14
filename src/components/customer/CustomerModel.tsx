@@ -3,7 +3,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { Controller, useForm } from "react-hook-form";
 import { FaCamera } from "react-icons/fa";
 import type { Customer } from "../../Types/Customer";
-import useGetAllCustomerBookings from "../../customHook/useGetAllCustomerBookings";
+import useGetAllCustomerBookings from "../../hooks/useGetAllCustomerBookings";
 import axios from "axios";
 import moment from "moment";
 import {
@@ -11,15 +11,16 @@ import {
   Card,
   Image,
   Input,
-  message,
   Modal,
+  Table,
   Tabs,
   type TabsProps,
 } from "antd";
 import { FaEye, FaWhatsapp } from "react-icons/fa6";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { uploadApiCaller } from "../../api/uploadApiCaller";
+import { appApiCaller } from "../../api/appApiCaller";
 import { FiEye, FiEyeOff } from "react-icons/fi";
+import { useToast } from "../ToastProvider";
 
 interface formInput {
   _id: string;
@@ -40,6 +41,7 @@ const CustomerModel = ({
   isOpen: boolean;
   onOpenChange: any;
 }) => {
+  const antToast = useToast();
   const { isSuccess, isError, data, setCustomerId } =
     useGetAllCustomerBookings();
   const PastBooking =
@@ -71,13 +73,13 @@ const CustomerModel = ({
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (apiData: any) =>
-      await uploadApiCaller.post("/app/auth/register", apiData),
+      await appApiCaller.post("/app/auth/register", apiData),
     onSuccess: () => {
       onOpenChange(false);
       queryClient.invalidateQueries({ queryKey: ["GetAllCustomer"] });
     },
     onError: (error) => {
-      message.error("Failed to create customer. Please try again.");
+      antToast.error("Failed to create customer. Please try again.");
       console.error("Error creating court:", error);
     },
   });
@@ -97,6 +99,36 @@ const CustomerModel = ({
   const handleclose = () => {
     onOpenChange(false);
   };
+
+  const columns = [
+    {
+      title: "Date",
+      dataIndex: "bookingDate",
+      key: "bookingDate",
+      render: (date: string) => moment(date).format("DD/MM/yyyy"),
+    },
+    {
+      title: "Court Name",
+      dataIndex: ["court", "courtName"],
+      key: "courtName",
+    },
+    {
+      title: "Sport",
+      dataIndex: "sport",
+      key: "sport",
+    },
+    {
+      title: "Amount",
+      dataIndex: ["payment", "totalAmount"],
+      key: "amount",
+      render: (amount: number) => `₹${amount}`,
+    },
+    {
+      title: "Location",
+      dataIndex: ["court", "location", "city"],
+      key: "location",
+    },
+  ];
 
   const items: TabsProps["items"] = [
     ...(!customer
@@ -131,70 +163,38 @@ const CustomerModel = ({
       key: "upcoming",
       label: "Upcoming Bookings",
       children: (
-        <Card>
-          <div className="grid grid-cols-5 font-semibold">
-            <p>Date</p>
-            <p>Court Name</p>
-            <p>Sport</p>
-            <p>Amount</p>
-            <p>Location</p>
-          </div>
-          <div className="flex flex-col">
-            {FutureBooking?.length > 0 ? (
-              FutureBooking?.map((item: any) => (
-                <div className="font-light grid grid-cols-5 text-sm">
-                  <p className="flex flex-row items-center">
-                    {moment(item.bookingDate).format("DD/MM/yyyy")}
-                  </p>
-                  <p>{item.court.courtName}</p>
-                  <p>{item.sport}</p>
-                  <p>{item.payment.totalAmount}</p>
-                  <p>{item.court.location.city}</p>
-                </div>
-              ))
-            ) : (
-              <p className="text-center font-light p-2">
-                No Upcoming Bookings Found
-              </p>
-            )}
-          </div>
-        </Card>
+        <Table
+          scroll={{ x: 700 }}
+          columns={columns}
+          dataSource={FutureBooking}
+          rowKey="_id"
+          pagination={false}
+          locale={{
+            emptyText: "No Upcoming Bookings Found",
+          }}
+          bordered
+          size="middle"
+          className="shadow-sm rounded-lg"
+        />
       ),
     },
     {
       key: "past",
       label: "Past Bookings",
       children: (
-        <Card>
-          <div className="grid grid-cols-5 font-semibold">
-            <p>Date</p>
-            <p>Court Name</p>
-            <p>Sport</p>
-            <p>Amount</p>
-            <p>Location</p>
-          </div>
-          <div className="flex flex-col">
-            {PastBooking?.length > 0 ? (
-              PastBooking?.map((item: any) => (
-                <div className="font-light grid grid-cols-5 text-sm">
-                  <p className="flex flex-row items-center">
-                    {moment(item.bookingDate).format("DD/MM/yyyy")}
-                  </p>
-                  <p>{item.court ? item.court.courtName : "Court Deleted"}</p>
-                  <p>{item.sport}</p>
-                  <p>{item.payment.totalAmount}</p>
-                  <p>
-                    {item.court ? item.court.location.city : "Court Deleted"}
-                  </p>
-                </div>
-              ))
-            ) : (
-              <p className="text-center font-light p-2">
-                No Upcoming Bookings Found
-              </p>
-            )}
-          </div>
-        </Card>
+        <Table
+          scroll={{ x: 700 }}
+          columns={columns}
+          dataSource={PastBooking}
+          rowKey="_id"
+          pagination={false}
+          locale={{
+            emptyText: "No Past Bookings Found",
+          }}
+          bordered
+          size="middle"
+          className="shadow-sm rounded-lg"
+        />
       ),
     },
   ];
@@ -202,10 +202,10 @@ const CustomerModel = ({
   return (
     <Modal footer={null} open={isOpen} closable centered onCancel={handleclose}>
       <form className="mt-6" onSubmit={handleSubmit(OnSubmit)}>
-        <div className="!flex !flex-row !items-center gap-3 !p-4 rounded-md shadow-btnInset">
+        <div className="!flex flex-col md:!flex-row !items-center gap-3 !p-4 rounded-md shadow-btnInset">
           <div className="relative">
             <Image
-              className="rounded-full object-cover !w-16 !h-16"
+              className="rounded-full object-cover !w-20 !h-20 md:!w-16 md:!h-16"
               src={profile ? profile : profile_img}
               alt="admin-img"
             />

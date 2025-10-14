@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { Button, Card } from "antd";
 import { IoLocationOutline } from "react-icons/io5";
 import { FaExternalLinkAlt } from "react-icons/fa";
-import { MdOutlineSportsVolleyball } from "react-icons/md";
+import { MdCurrencyRupee, MdOutlineSportsVolleyball } from "react-icons/md";
 import { FiEdit } from "react-icons/fi";
 const SingleCourt = ({ court }: { court: Court }) => {
   const dispatch = useDispatch();
@@ -14,7 +14,7 @@ const SingleCourt = ({ court }: { court: Court }) => {
   return (
     <Card
       key={court._id}
-      className="bg-white hover:shadow-xl w-[350px] !p-0 shadow-md flex flex-col gap-2 rounded-xl overflow-hidden transition duration-300 transform hover:scale-[1.01] hover:shadow-2xl"
+      className="bg-white min-w-[300px] !p-0 shadow-md flex flex-col gap-2 rounded-xl overflow-hidden transition duration-300 transform hover:scale-[1.001] hover:shadow-xl"
     >
       <div className="w-full h-[180px]">
         <img
@@ -38,7 +38,10 @@ const SingleCourt = ({ court }: { court: Court }) => {
           {court.sportsAvailable?.map((item: string) => item).join(", ")}
         </p>
         <div className="flex flex-row items-center justify-between gap-2 w-full">
-          <p className="font-semibold text-xl">${court?.pricePerHour}/hr</p>
+          <p className="font-semibold text-xl flex gap-1 items-center flex-row">
+            <MdCurrencyRupee />
+            {court?.pricePerHour}/hr
+          </p>
           <div className=" flex flex-row items-center gap-2">
             <Button
               onClick={() =>

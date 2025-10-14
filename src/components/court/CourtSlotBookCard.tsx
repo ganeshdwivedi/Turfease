@@ -1,44 +1,49 @@
 import { Button } from "antd";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import React from "react";
 import { MdSportsBasketball } from "react-icons/md";
+import GlobalBookingModal from "./GolbalBookingModal";
+import type { IavailableSlots } from "../../Types/Court";
+import { useDispatch } from "react-redux";
+import { openBookingModal } from "../../redux/bookingSlice";
+import { PiNeedleBold } from "react-icons/pi";
+import { RiMapPin2Fill } from "react-icons/ri";
+import handleOpenMap from "../../utility/mapOpen";
+import { useMutation } from "@tanstack/react-query";
+import { appApiCaller } from "../../api/appApiCaller";
 
-interface Slot {
+interface CourtCardProps {
+  courtData: IavailableSlots;
+  selectedDate: Dayjs;
+  //   onBookSlot: (courtData: CourtData, slot: Slot) => void;
+}
+
+interface IPaymentInitate {
+  courtId: string;
+  bookingDate: string;
   startTime: string;
   endTime: string;
 }
 
-interface Court {
-  _id: string;
-  courtName: string;
-  address: string;
-  profile_img?: string;
-  location: {
-    city: string;
-    state: string;
-  };
-  sportsAvailable: string[];
-}
-
-interface CourtData {
-  courtId: string;
-  court: Court;
-  availableSlots: Slot[];
-  bookedSlots?: Record<string, string[]>; // Optional: booked slots per date
-}
-
-interface CourtCardProps {
-  courtData: CourtData;
-  //   selectedDate: string;
-  //   onBookSlot: (courtData: CourtData, slot: Slot) => void;
-}
-
 const CourtSlotBookCard: React.FC<CourtCardProps> = ({
   courtData,
-  //   selectedDate,
+  selectedDate,
   //   onBookSlot,
 }) => {
+  const dispatch = useDispatch();
   const { court, availableSlots } = courtData;
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: async ({ apiData }: { apiData: IPaymentInitate }) =>
+      await appApiCaller.post(`app/initiate-payment`, apiData),
+    onSuccess: (response: any) => {
+      const {
+        data: { data },
+      } = response;
+      dispatch(openBookingModal(data));
+    },
+  });
+
   //   const booked = courtData.bookedSlots?.[selectedDate] || [];
 
   return (
@@ -50,12 +55,27 @@ const CourtSlotBookCard: React.FC<CourtCardProps> = ({
       />
       <div className="p-6">
         <h3 className="text-xl font-bold text-gray-800">{court?.courtName}</h3>
-        <p className="text-sm text-gray-500 mt-1">
-          {court.address}, {court?.location?.city}, {court?.location?.state} •
-        </p>
-        <p className="flex gap-3 items-center">
+        <div className="flex flex-row items-center justify-between">
+          <p className="text-sm text-gray-500 mt-1">
+            {court.address}, {court?.location?.city}, {court?.location?.state}
+          </p>
+          <Button
+            className="text-brand-green"
+            icon={<RiMapPin2Fill />}
+            type="text"
+            onClick={() =>
+              handleOpenMap(
+                court?.location?.latitude || 0,
+                court?.location?.longitude || 0
+              )
+            }
+          >
+            Map
+          </Button>
+        </div>
+        <p className="flex gap-3 items-center mt-2">
           <MdSportsBasketball className="!text-gray-600" />
-          {court.sportsAvailable.join(", ")}
+          {court?.sportsAvailable.join(", ")}
         </p>
 
         <div className="mt-4 pt-4 border-t border-gray-100">
@@ -65,18 +85,27 @@ const CourtSlotBookCard: React.FC<CourtCardProps> = ({
           <div className="grid grid-cols-3 sm:grid-cols-3 gap-2">
             {availableSlots?.length > 0 ? (
               availableSlots?.map((slot, index: number) => {
-                const slotLabel = `${slot?.startTime} - ${dayjs(
-                  slot?.endTime,
-                  "HH:mm"
-                ).format("hh:mm a")}`;
+                const slotLabel = `${dayjs(slot?.startTime, "HH:mm:ss").format(
+                  "hh:mm"
+                )} - ${dayjs(slot?.endTime, "HH:mm:ss").format("hh:mm a")}`;
                 const isBooked = false;
 
                 return (
                   <Button
+                    loading={isPending}
                     key={slotLabel + index}
                     type="primary"
                     // disabled={isBooked}
-                    // onClick={() => !isBooked && onBookSlot(courtData, slot)}
+                    onClick={() =>
+                      mutate({
+                        apiData: {
+                          courtId: court._id,
+                          bookingDate: selectedDate.format("YYYY-MM-DD"),
+                          startTime: slot.startTime,
+                          endTime: slot.endTime,
+                        },
+                      })
+                    }
                     className={`!text-xs !font-semibold  !transition-colors ${
                       isBooked
                         ? "!bg-gray-200 !text-gray-400 cursor-not-allowed"
@@ -95,6 +124,7 @@ const CourtSlotBookCard: React.FC<CourtCardProps> = ({
           </div>
         </div>
       </div>
+      <GlobalBookingModal />
     </div>
   );
 };

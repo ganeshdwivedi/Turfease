@@ -4,7 +4,7 @@ import { DatePicker } from "antd";
 
 const Calendar = () => {
   return (
-    <div className="p-5">
+    <div className="lg:p-5">
       <CalendarPage />
     </div>
   );

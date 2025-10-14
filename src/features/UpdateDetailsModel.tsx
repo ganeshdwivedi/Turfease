@@ -14,7 +14,7 @@ import { LoginME, UpdateAdminInfo } from "../api/User";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../redux/store";
 import { updateAuthState } from "../redux/authSlice";
-import toast from "react-hot-toast";
+import { useToast } from "../components/ToastProvider";
 
 interface FormInput {
   name: string;
@@ -33,6 +33,7 @@ const UpdateDetailsModel = ({
   isOpen: boolean;
   setIsOpen: (value: boolean) => void;
 }) => {
+  const antToast = useToast();
   const authStateUser: any = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch();
   const {
@@ -74,7 +75,7 @@ const UpdateDetailsModel = ({
     const apiData = appendFormData();
     try {
       const response = await UpdateAdminInfo(apiData);
-      toast.success(response.data.message);
+      antToast.success(response.data.message);
       dispatch(
         updateAuthState({
           isLoggedIn: true,
@@ -84,7 +85,7 @@ const UpdateDetailsModel = ({
       handleClose();
     } catch (error: Error | any) {
       const errormssg = error.response.data.error;
-      toast.error(errormssg);
+      antToast.error(errormssg);
     }
   };
 
@@ -98,7 +99,7 @@ const UpdateDetailsModel = ({
         })
       );
     } catch (error: any) {
-      toast.error(error);
+      antToast.error(error);
     }
   };
 

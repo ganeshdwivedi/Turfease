@@ -12,6 +12,7 @@ import { useMutation } from "@tanstack/react-query";
 import { apiCaller } from "../api/ApiCaller";
 import { MdEmail } from "react-icons/md";
 import type { RootState } from "../redux/store";
+import { useToast } from "../components/ToastProvider";
 
 interface FormInput {
   email: string;
@@ -19,9 +20,9 @@ interface FormInput {
 }
 
 export default function App() {
+  const antToast = useToast();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [messageApi, contextHolder] = message.useMessage(); // ✅ add this
   const [isPasswordVisible, setisPasswordVisible] = useState<boolean>(false);
   const { register, control, watch, handleSubmit } = useForm<FormInput>();
   const isauthenticated = useSelector(
@@ -35,7 +36,7 @@ export default function App() {
     mutationFn: (apiData: { email: String; password: String }) =>
       apiCaller.post("/auth/login", apiData),
     onSuccess: ({ data: response }) => {
-      messageApi.success("Logged in successfully!");
+      antToast.success("Logged in successfully!");
       localStorage.setItem("user", JSON.stringify(response.user));
       localStorage.setItem("accessToken", response.token);
       dispatch(updateAuthState({ isLoggedIn: true, user: response.user }));
@@ -44,7 +45,7 @@ export default function App() {
       }, 500);
     },
     onError: (error: any) => {
-      messageApi.error(error?.response?.data?.error);
+      antToast.error(error?.response?.data?.error);
     },
   });
 
@@ -55,106 +56,108 @@ export default function App() {
   }, [isauthenticated]);
 
   return (
-    <div className="!h-[100vh] !w-[100vw] bg-[url('https://img.freepik.com/premium-photo/young-girl-closed-tennis-court-with-ball-racket_489646-1290.jpg')] bg-no-repeat bg-center bg-cover">
-      {contextHolder}
-      <Modal closeIcon={null} width={450} footer={null} open={true} centered>
-        <div className="text-center !mb-5">
-          <h3 className="text-4xl font-bold text-brand-green">Courtify</h3>
-          <p className="mt-2 text-gray-600 !text-lg">
-            Welcome back! Please sign in to your account.
-          </p>
-        </div>
-        <Alert
-          icon={<PiWarningFill />}
-          className="!border !border-yellow-500 !my-4 !p-2 !rounded-md"
-          closable
-          message="Server Notice"
-          description="Hosted on Free Tier: Response times may be slower than usual (30–50s). Thanks for your patience 🙏"
-          type="warning"
-          showIcon
-          banner
-        />
-        <>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <Controller
-              name="email"
-              control={control}
-              rules={{
-                required: "Email is required",
-                pattern: {
-                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: "Invalid email address",
-                },
-              }}
-              render={({ field, fieldState }) => (
-                <Form.Item
-                  layout="vertical"
-                  label={"Email"}
-                  validateStatus={fieldState.error ? "error" : ""}
-                  help={fieldState.error?.message}
-                >
-                  <Input
-                    size="large"
-                    prefix={<MdEmail className="!text-gray-300 !text-xl" />}
-                    {...field}
-                    autoFocus
-                    placeholder="Enter your email"
-                  />
-                </Form.Item>
-              )}
-            />
-            <Controller
-              name="password"
-              control={control}
-              render={({ field, fieldState }) => (
-                <Form.Item
-                  layout="vertical"
-                  label={"Password"}
-                  validateStatus={fieldState.error ? "error" : ""}
-                  help={fieldState.error?.message}
-                >
-                  <Input.Password
-                    size="large"
-                    {...field}
-                    prefix={<FaLock className="text-xl !text-gray-300 " />}
-                    placeholder="Enter your password"
-                    type={isPasswordVisible ? "text" : "password"}
-                  />
-                </Form.Item>
-              )}
-            />
+    <div className="grid grid-cols-1 lg:grid-cols-2">
+      <div className="!h-[100vh] !w-[100vw]  hidden lg:block  bg-[url('https://img.freepik.com/premium-photo/young-girl-closed-tennis-court-with-ball-racket_489646-1290.jpg')] bg-no-repeat bg-center bg-cover"></div>
+      <div className="bg-white col-span-1 lg:p-3 relative !h-full">
+        <div className="max-w-[600px] lg:!min-w-[450px] p-5 absolute top-[50%] lg:left-[50%] lg:-translate-x-[50%] lg:-translate-y-[50%]">
+          <div className="text-center !mb-5">
+            <h3 className="text-4xl font-bold text-brand-green">Courtify</h3>
+            <p className="mt-2 text-gray-600 !text-lg">
+              Welcome back! Please sign in to your account.
+            </p>
+          </div>
+          <Alert
+            icon={<PiWarningFill />}
+            className="!border !border-yellow-500 !my-4 !p-2 !rounded-md"
+            closable
+            message="Server Notice"
+            description="Hosted on Free Tier: Response times may be slower than usual (30–50s). Thanks for your patience 🙏"
+            type="warning"
+            showIcon
+            banner
+          />
+          <>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <Controller
+                name="email"
+                control={control}
+                rules={{
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: "Invalid email address",
+                  },
+                }}
+                render={({ field, fieldState }) => (
+                  <Form.Item
+                    layout="vertical"
+                    label={"Email"}
+                    validateStatus={fieldState.error ? "error" : ""}
+                    help={fieldState.error?.message}
+                  >
+                    <Input
+                      size="large"
+                      prefix={<MdEmail className="!text-gray-300 !text-xl" />}
+                      {...field}
+                      autoFocus
+                      placeholder="Enter your email"
+                    />
+                  </Form.Item>
+                )}
+              />
+              <Controller
+                name="password"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <Form.Item
+                    layout="vertical"
+                    label={"Password"}
+                    validateStatus={fieldState.error ? "error" : ""}
+                    help={fieldState.error?.message}
+                  >
+                    <Input.Password
+                      size="large"
+                      {...field}
+                      prefix={<FaLock className="text-xl !text-gray-300 " />}
+                      placeholder="Enter your password"
+                      type={isPasswordVisible ? "text" : "password"}
+                    />
+                  </Form.Item>
+                )}
+              />
 
-            <div className="flex py-2 px-1 justify-between">
-              {/* <Checkbox>Remember me</Checkbox> */}
-              {/* <Link color="primary" to="#">
+              <div className="flex py-2 px-1 justify-between">
+                {/* <Checkbox>Remember me</Checkbox> */}
+                {/* <Link color="primary" to="#">
               Forgot password?
               </Link> */}
-            </div>
-            <div className="mt-5 flex justify-end gap-4 ">
-              {/* <Button color="danger" onClick={() => console.log("false")}>
+              </div>
+              <div className="mt-5 flex justify-end gap-4 ">
+                {/* <Button color="danger" onClick={() => console.log("false")}>
               Cancel
               </Button> */}
-              <Button
-                className="!w-full"
-                loading={isPending}
-                type="primary"
-                htmlType="submit"
-              >
-                Sign in
-              </Button>
-            </div>
-          </form>
-        </>
-        <p className="mt-6 text-center text-sm text-gray-600">
-          Don't have an account?{" "}
-          <Link
-            to={"/club/register"}
-            className="font-medium text-brand-green hover:!text-green-800 cursor-pointer"
-          >
-            Sign up
-          </Link>
-        </p>
-      </Modal>
+                <Button
+                  className="!w-full"
+                  loading={isPending}
+                  type="primary"
+                  htmlType="submit"
+                >
+                  Sign in
+                </Button>
+              </div>
+            </form>
+          </>
+          <p className="mt-6 text-center text-sm text-gray-600">
+            Don't have an account?{" "}
+            <Link
+              to={"/club/register"}
+              className="font-medium text-brand-green hover:!text-green-800 cursor-pointer"
+            >
+              Sign up
+            </Link>
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

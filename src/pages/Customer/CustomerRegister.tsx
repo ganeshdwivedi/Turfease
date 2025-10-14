@@ -10,16 +10,7 @@ import {
 } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { updateAuthState } from "../../redux/authSlice";
-import {
-  Button,
-  Checkbox,
-  Form,
-  Input,
-  Modal,
-  Alert,
-  message,
-  InputNumber,
-} from "antd";
+import { Button, Checkbox, Form, Input, Modal, Alert, InputNumber } from "antd";
 import {
   FaLock,
   FaRegEye,
@@ -32,7 +23,8 @@ import { useMutation } from "@tanstack/react-query";
 import { apiCaller } from "../../api/ApiCaller";
 import { MdEmail, MdOutlinePhone } from "react-icons/md";
 import { FaPhoneAlt } from "react-icons/fa";
-import { uploadApiCaller } from "../../api/uploadApiCaller";
+import { appApiCaller } from "../../api/appApiCaller";
+import { useToast } from "../../components/ToastProvider";
 
 interface FormInput {
   email: string;
@@ -42,12 +34,12 @@ interface FormInput {
 }
 
 export default function CustomerRegister() {
+  const antToast = useToast();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const source = searchParams.get("utm") || "turfease"; // "chatbot"
-  const [messageApi, contextHolder] = message.useMessage(); // ✅ add this
   const [isPasswordVisible, setisPasswordVisible] = useState<boolean>(false);
   const { register, control, watch, handleSubmit } = useForm<FormInput>();
 
@@ -56,10 +48,10 @@ export default function CustomerRegister() {
   };
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (apiData: any) =>
-      uploadApiCaller.post("/app/auth/register", { ...apiData, source }),
+    mutationFn: async (apiData: any) =>
+      await appApiCaller.post("/app/auth/register", { ...apiData, source }),
     onSuccess: ({ data: response }) => {
-      messageApi.success("Logged in successfully!");
+      antToast.success("Logged in successfully!");
       localStorage.setItem("user", JSON.stringify(response.user));
       localStorage.setItem("accessToken", response.token);
       dispatch(updateAuthState({ isLoggedIn: true, user: response.user }));
@@ -68,15 +60,15 @@ export default function CustomerRegister() {
       }, 500);
     },
     onError: (error: any) => {
-      messageApi.error(error?.response?.data?.error);
+      console.log(error, "error-->");
+      antToast.error(error?.response?.data?.error);
     },
   });
   console.log(source, "params-->params");
 
   return (
-    <div className=" flex justify-center items-center mt-5">
+    <div className=" absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%]  mt-5">
       <div className="!h-full !w-[450px] !p-5 shadow-2xl rounded-2xl">
-        {contextHolder}
         <div className="text-center !mb-5">
           <h3 className="text-4xl font-bold text-brand-green">Courtify</h3>
           <h2 className="uppercase !text-xl text-start font-semibold mt-2">

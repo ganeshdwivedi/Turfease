@@ -1,6 +1,6 @@
 import { Card, Skeleton } from "antd";
 import React from "react";
-import useGetPaymentStats from "../../customHook/useGetPaymentStats";
+import useGetPaymentStats from "../../hooks/useGetPaymentStats";
 
 interface StatsCardProps {
   selectedDate: Date;

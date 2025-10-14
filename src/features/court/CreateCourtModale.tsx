@@ -12,20 +12,23 @@ import {
   Modal,
   Row,
   Col,
-  message,
 } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../redux/store";
 import { CourtStatus, type Court, type ICourt } from "../../Types/Court";
 import dayjs from "dayjs";
-import { uploadApiCaller } from "../../api/uploadApiCaller";
+import { appApiCaller } from "../../api/appApiCaller";
 import { closeModal, unSelectCourt } from "../../redux/courtSlice";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiCaller } from "../../api/ApiCaller";
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+import AddressAutocomplete from "../../components/select/SelectAdress";
+import { useToast } from "../../components/ToastProvider";
 
 const { Option } = Select;
 
 const CreateCourtModale = () => {
+  const antToast = useToast();
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const { isOpen, court, mode } = useSelector(
@@ -69,7 +72,7 @@ const CreateCourtModale = () => {
     formData.append("file", file);
 
     try {
-      const res = await uploadApiCaller.post("/upload", formData, {
+      const res = await appApiCaller.post("/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       setValue("profile_url", res.data);
@@ -100,7 +103,7 @@ const CreateCourtModale = () => {
     append(tempFile);
 
     try {
-      const res = await uploadApiCaller.post("/upload", formData, {
+      const res = await appApiCaller.post("/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
@@ -134,7 +137,7 @@ const CreateCourtModale = () => {
       queryClient.invalidateQueries({ queryKey: ["GetAllCourts"] });
     },
     onError: (error) => {
-      message.error("Failed to create court. Please try again.");
+      antToast.error("Failed to create court. Please try again.");
       console.error("Error creating court:", error);
     },
   });
@@ -184,6 +187,12 @@ const CreateCourtModale = () => {
     }
   }, [court]);
 
+  const handlePlaceSelected = (place: any) => {
+    console.log("Selected Place Details:", place);
+  };
+
+  console.log(watch(), "wathchhh");
+
   return (
     <Modal
       title="Create New Court"
@@ -215,24 +224,11 @@ const CreateCourtModale = () => {
         </Form.Item>
 
         {/* Address */}
-        <Form.Item
-          label="Address"
-          validateStatus={errors.address ? "error" : ""}
-          help={errors.address?.message}
-        >
-          <Controller
-            disabled={isReadOnly}
-            name="address"
-            control={control}
-            rules={{ required: "Address is required" }}
-            render={({ field }) => (
-              <Input.TextArea {...field} placeholder="Enter address" />
-            )}
-          />
-        </Form.Item>
+
+        {/* <StateCitySelector control={control} name="location" setValue={setValue} watch={watch} /> */}
 
         {/* Location */}
-        <Row gutter={24}>
+        {/* <Row gutter={24}>
           <Col span={12}>
             <Form.Item
               label="State"
@@ -267,7 +263,7 @@ const CreateCourtModale = () => {
               />
             </Form.Item>
           </Col>
-        </Row>
+        </Row> */}
 
         <Row gutter={24}>
           <Col span={12}>
@@ -382,45 +378,55 @@ const CreateCourtModale = () => {
         {/* Status */}
 
         {/* Working Hours */}
-        <Row>
+        <Row gutter={24}>
           <Col span={12}>
-            <Form.Item
-              label="Start Time"
-              validateStatus={errors.workingHours?.start ? "error" : ""}
-              help={errors.workingHours?.start?.message}
-            >
-              <Controller
-                disabled={isReadOnly}
-                name="workingHours.start"
-                control={control}
-                rules={{ required: "Start time is required" }}
-                render={({ field: { onChange, value, ref, ...rest } }) => (
+            <Controller
+              disabled={isReadOnly}
+              name="workingHours.start"
+              control={control}
+              rules={{ required: "Start time is required" }}
+              render={({
+                field: { onChange, value, ref, ...rest },
+                fieldState: { error },
+              }) => (
+                <Form.Item
+                  label="Start Time"
+                  validateStatus={error ? "error" : ""}
+                  help={error?.message}
+                >
                   <TimePicker
+                    className="!w-full"
                     {...rest}
+                    minuteStep={30}
                     ref={ref}
                     format="HH:mm a"
-                    value={value ? dayjs(value, "HH:mm") : null} // ✅ convert string → Dayjs
+                    value={value ? dayjs(value, "HH:mm") : null}
                     onChange={(time) =>
                       onChange(time ? time.format("HH:mm") : null)
-                    } // ✅ convert Dayjs → string
+                    }
                   />
-                )}
-              />
-            </Form.Item>
+                </Form.Item>
+              )}
+            />
           </Col>
           <Col span={12}>
-            <Form.Item
-              label="End Time"
-              validateStatus={errors.workingHours?.end ? "error" : ""}
-              help={errors.workingHours?.end?.message}
-            >
-              <Controller
-                disabled={isReadOnly}
-                name="workingHours.end"
-                control={control}
-                rules={{ required: "End time is required" }}
-                render={({ field: { onChange, value, ref, ...rest } }) => (
+            <Controller
+              disabled={isReadOnly}
+              name="workingHours.end"
+              control={control}
+              rules={{ required: "End time is required" }}
+              render={({
+                field: { onChange, value, ref, ...rest },
+                fieldState: { error },
+              }) => (
+                <Form.Item
+                  label="End Time"
+                  validateStatus={error ? "error" : ""}
+                  help={error?.message}
+                >
                   <TimePicker
+                    className="!w-full"
+                    minuteStep={30}
                     {...rest}
                     ref={ref}
                     format="HH:mm a"
@@ -429,11 +435,47 @@ const CreateCourtModale = () => {
                       onChange(time ? time.format("HH:mm") : null)
                     } // ✅ convert Dayjs → string
                   />
-                )}
-              />
-            </Form.Item>
+                </Form.Item>
+              )}
+            />
           </Col>
         </Row>
+
+        <Form.Item
+          label="Address"
+          validateStatus={errors.address ? "error" : ""}
+          help={errors.address?.message}
+        >
+          <Controller
+            disabled={isReadOnly}
+            name="address"
+            control={control}
+            rules={{ required: "Address is required" }}
+            render={({ field }) => (
+              <Input.TextArea {...field} placeholder="Enter address" />
+            )}
+          />
+        </Form.Item>
+
+        <Col>
+          <Controller
+            control={control}
+            name="location"
+            render={({ field: { onChange, value } }) => (
+              <Form.Item label="Select Location">
+                <LoadScript
+                  googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_KEY!}
+                  libraries={["places"]}
+                >
+                  <AddressAutocomplete
+                    value={value}
+                    onPlaceSelected={(data: any) => onChange(data)}
+                  />
+                </LoadScript>
+              </Form.Item>
+            )}
+          />
+        </Col>
 
         {/* Submit Button */}
         <Form.Item>

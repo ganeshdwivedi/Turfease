@@ -9,11 +9,11 @@ import {
   List,
   Typography,
   Modal,
-  message,
 } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiCaller } from "../../api/ApiCaller";
+import { useToast } from "../ToastProvider";
 
 const { Option } = Select;
 const { Text } = Typography;
@@ -24,6 +24,7 @@ interface CreatePlanFormProps {
 }
 
 const CreatePlanForm = ({ isOpen, onClose }: CreatePlanFormProps) => {
+  const antToast = useToast();
   const { control, handleSubmit, reset } = useForm({
     defaultValues: {
       planName: "",
@@ -43,7 +44,7 @@ const CreatePlanForm = ({ isOpen, onClose }: CreatePlanFormProps) => {
       queryClient.invalidateQueries({ queryKey: ["GetAllPlans"] });
     },
     onError: (error) => {
-      message.error("Failed to Create Plan. Please try again.");
+      antToast.error("Failed to Create Plan. Please try again.");
       console.error("Error creating court:", error);
     },
   });

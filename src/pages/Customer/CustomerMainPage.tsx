@@ -3,6 +3,7 @@ import { Content, Header } from "antd/es/layout/layout";
 import React from "react";
 import { BiUser } from "react-icons/bi";
 import { Link, Outlet } from "react-router-dom";
+import Footer from "./Footer";
 
 const CustomerMainPage = () => {
   return (
@@ -15,7 +16,7 @@ const CustomerMainPage = () => {
             </a>
             <div className="flex items-center space-x-4">
               <Link
-                to="#"
+                to="/book/my-bookings"
                 className="text-sm font-medium !text-gray-600 hover:text-brand-green"
               >
                 My Bookings
@@ -35,7 +36,7 @@ const CustomerMainPage = () => {
       >
         {Outlet && <Outlet />}
       </Content>
-      All right reserveds
+      <Footer />
     </Layout>
   );
 };

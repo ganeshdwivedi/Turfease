@@ -9,6 +9,7 @@ import Providers from "./features/QueryClient.tsx";
 import { Toaster } from "react-hot-toast";
 import { NextUIProvider } from "@nextui-org/react";
 import { ConfigProvider } from "antd";
+import { ToastProvider } from "./components/ToastProvider.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -19,14 +20,16 @@ createRoot(document.getElementById("root")!).render(
         },
       }}
     >
-      <Provider store={store}>
-        <Providers>
-          <NextUIProvider>
-            <Toaster />
-            <App />
-          </NextUIProvider>
-        </Providers>
-      </Provider>
+      <ToastProvider>
+        <Provider store={store}>
+          <Providers>
+            <NextUIProvider>
+              <Toaster />
+              <App />
+            </NextUIProvider>
+          </Providers>
+        </Provider>
+      </ToastProvider>
     </ConfigProvider>
   </StrictMode>
 );

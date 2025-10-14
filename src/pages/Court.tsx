@@ -39,11 +39,6 @@ const Court = () => {
         setAllCourts={setAllCourts}
         selectedSport={selectedSport}
       />
-      {/* <div className="bg-no-repeat grid h-[100vh] place-items-center bg-cover CourtBGGG w-[60%] ">
-
-      
-        
-      </div> */}
 
       <CreateCourtModale />
     </div>

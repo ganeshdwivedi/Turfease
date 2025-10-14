@@ -9,6 +9,7 @@ import { updateAuthState } from "./redux/authSlice";
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
+
   const authState = useSelector((state: any) => state.auth);
   const dispatch = useDispatch();
 
@@ -41,7 +42,7 @@ function App() {
   }
 
   return (
-    <div className="App !overflow-hidden ">
+    <div className="App !overflow-auto !h-screen">
       <RouterProvider router={router} />
     </div>
   );

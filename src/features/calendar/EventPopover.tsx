@@ -9,19 +9,25 @@ interface EventPopoverProps {
 
 const EventPopover = ({ event }: EventPopoverProps) => {
   return (
-    <div>
-      <div className="flex justify-between items-center mb-2">
-        <p>{dayjs(event?.startTime).format("HH:mm a")}</p>
-        <p>{dayjs(event?.endTime).format("HH:mm a")}</p>
+    <div className="!bg-[#00A0DF1F] !p-2 !w-[250px] overflow-hidden">
+      <div className="flex gap-2 items-center !text-gray-500 !font-semibold">
+        <p>{dayjs(event?.startTime).format("HH:mm")}</p>
+        <p>{dayjs(event?.endTime).format("HH:mm")}</p>
       </div>
-      <strong>
-        {event.court?.courtName} - ({event?.sport})
+      <strong className="!text-blue-500">
+        Booking - {event.court?.courtName}
       </strong>
-      <div className="flex justify-between items-center my-2 text-sm">
-        <p>Payment</p>
-        <p className="text-red-600">{event?.payment?.remainingAmount}</p>
+      <div className="mt-2">
+        <strong className="!text-gray-600">Booked By</strong>
+        <UserProfile user={event?.customer} />
       </div>
-      <UserProfile user={event?.customer} />
+
+      <div className="flex justify-between items-center my-2 text-sm">
+        <strong>Pending Payment</strong>
+        <p className="bg-red-600 text-white break-words rounded-lg px-2">
+          {event?.payment?.remainingAmount} INR
+        </p>
+      </div>
     </div>
   );
 };

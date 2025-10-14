@@ -1,25 +1,18 @@
-import { message, Skeleton } from "antd";
+import { Skeleton } from "antd";
 import React from "react";
 import PlanCard2 from "../components/dashboard/PlansCard2";
 import { apiCaller } from "../api/ApiCaller";
 import { useQuery } from "@tanstack/react-query";
-import { uploadApiCaller } from "../api/uploadApiCaller";
+import { appApiCaller } from "../api/appApiCaller";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import type { RootState } from "../redux/store";
 import type { User } from "../Types/Customer";
-
-const loadRazorpayScript = () => {
-  return new Promise((resolve) => {
-    const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.onload = () => resolve(true);
-    script.onerror = () => resolve(false);
-    document.body.appendChild(script);
-  });
-};
+import { loadRazorpayScript } from "../utility/razorpayScriptLoad";
+import { useToast } from "../components/ToastProvider";
 
 const Subscription = () => {
+  const antToast = useToast();
   const user: any = useSelector((state: RootState) => state.auth?.user);
   const navigate = useNavigate();
   const { data, isLoading } = useQuery({
@@ -33,19 +26,17 @@ const Subscription = () => {
     refetchOnWindowFocus: false,
   });
 
-  console.log(user, "user");
-
   const handleSubscribe = async (selectedPlan: any) => {
     // Check if the script loader is working
     const loaded = await loadRazorpayScript();
     if (!loaded) {
-      message.error(
+      antToast.error(
         "Razorpay SDK failed to load. Please check your internet connection and try again."
       );
       return;
     }
     if (!user) {
-      message.error("please login to continue");
+      antToast.error("please login to continue");
       return;
     }
     console.log("✅ Razorpay script loaded successfully.");
@@ -53,7 +44,7 @@ const Subscription = () => {
     try {
       // Step 1: Create subscription via backend
       console.log("➡️ Attempting to create subscription on backend...");
-      const { data } = await uploadApiCaller.post("create-subscription", {
+      const { data } = await appApiCaller.post("create-subscription", {
         planId: selectedPlan?.razorpayPlanId,
         email: user?.email,
         totalCount: 12,
@@ -86,7 +77,7 @@ const Subscription = () => {
           console.log("✅ Payment successful! Handler response:", response);
           try {
             console.log("➡️ Verifying payment on backend...");
-            const verify = await uploadApiCaller.post("verify-subscription", {
+            const verify = await appApiCaller.post("verify-subscription", {
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_subscription_id: response.razorpay_subscription_id,
               razorpay_signature: response.razorpay_signature,
@@ -96,15 +87,15 @@ const Subscription = () => {
 
             console.log("✅ Verification response from backend:", verify.data);
             if (verify.data.success) {
-              message.success("Subscription successful and verified!");
+              antToast.success("Subscription successful and verified!");
               navigate("/club/calendars");
               // Update UI here
             } else {
-              message.error("Payment verification failed!");
+              antToast.error("Payment verification failed!");
             }
           } catch (err) {
             console.error("❌ Verification API call failed:", err);
-            message.error("An error occurred during payment verification.");
+            antToast.error("An error occurred during payment verification.");
           }
         },
       };

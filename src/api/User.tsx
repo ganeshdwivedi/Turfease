@@ -1,7 +1,7 @@
 import toast from "react-hot-toast";
 import type { BECustomerUpdate } from "../Types/Customer";
 import { apiCaller } from "./ApiCaller";
-import { uploadApiCaller } from "./uploadApiCaller";
+import { appApiCaller } from "./appApiCaller";
 
 interface user {
   email: string;
@@ -19,7 +19,7 @@ export const Login = async (apidata: user) => {
 
 export const LoginME = async () => {
   try {
-    const response = await uploadApiCaller.get("/app/me");
+    const response = await appApiCaller.get("/app/me");
     return response.data.data;
   } catch (error: any) {
     throw error.message;

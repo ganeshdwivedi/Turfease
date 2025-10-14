@@ -5,13 +5,14 @@ import { Login } from "../../api/User";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { updateAuthState } from "../../redux/authSlice";
-import { Button, Checkbox, Form, Input, Modal, Alert, message } from "antd";
+import { Button, Checkbox, Form, Input, Modal, Alert } from "antd";
 import { FaLock, FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { PiWarningFill } from "react-icons/pi";
 import { useMutation } from "@tanstack/react-query";
 import { apiCaller } from "../../api/ApiCaller";
 import { MdEmail } from "react-icons/md";
-import { uploadApiCaller } from "../../api/uploadApiCaller";
+import { appApiCaller } from "../../api/appApiCaller";
+import { useToast } from "../../components/ToastProvider";
 
 interface FormInput {
   email: string;
@@ -19,9 +20,9 @@ interface FormInput {
 }
 
 export default function CustomerSigin() {
+  const antToast = useToast();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [messageApi, contextHolder] = message.useMessage(); // ✅ add this
   const [isPasswordVisible, setisPasswordVisible] = useState<boolean>(false);
   const { register, control, watch, handleSubmit } = useForm<FormInput>();
 
@@ -31,9 +32,9 @@ export default function CustomerSigin() {
 
   const { mutate, isPending } = useMutation({
     mutationFn: (apiData: { email: String; password: String }) =>
-      uploadApiCaller.post("/app/auth/login", apiData),
+      appApiCaller.post("/app/auth/login", apiData),
     onSuccess: ({ data: response }) => {
-      messageApi.success("Logged in successfully!");
+      antToast.success("Logged in successfully!");
       localStorage.setItem("user", JSON.stringify(response.user));
       localStorage.setItem("accessToken", response.token);
       dispatch(updateAuthState({ isLoggedIn: true, user: response.user }));
@@ -42,14 +43,13 @@ export default function CustomerSigin() {
       }, 500);
     },
     onError: (error: any) => {
-      messageApi.error(error?.response?.data?.error);
+      antToast.error(error?.response?.data?.error);
     },
   });
 
   return (
-    <div className=" flex justify-center items-center">
+    <div className=" absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] ">
       <div className="!w-[450px] !h-full shadow-2xl rounded-2xl !p-5">
-        {contextHolder}
         <div className="text-center !mb-5">
           <h3 className="text-4xl font-bold text-brand-green">Courtify</h3>
           <p className="mt-2 text-gray-600 !text-lg">

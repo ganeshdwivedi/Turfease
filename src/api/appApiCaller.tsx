@@ -1,11 +1,11 @@
 import axios from "axios";
 import type { InternalAxiosRequestConfig } from "axios";
 
-export const uploadApiCaller = axios.create({
+export const appApiCaller = axios.create({
   baseURL: `${import.meta.env.VITE_BACKEND_URL}`,
 });
 
-uploadApiCaller.interceptors.request.use(
+appApiCaller.interceptors.request.use(
   async (
     config: InternalAxiosRequestConfig<any>
   ): Promise<InternalAxiosRequestConfig<any>> => {

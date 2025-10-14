@@ -3,7 +3,7 @@ import SingleCourt from "../../components/court/SingleCourt";
 import type { Court } from "../../Types/Court";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../redux/store";
-import useGetAllCourts from "../../customHook/useGetAllCourts";
+import useGetAllCourts from "../../hooks/useGetAllCourts";
 
 const CourtFilter = ({
   selectedSport,

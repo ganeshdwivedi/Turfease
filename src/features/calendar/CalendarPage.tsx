@@ -16,18 +16,15 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import { SlArrowLeft } from "react-icons/sl";
 import { SlArrowRight } from "react-icons/sl";
 import moment from "moment";
-import { Card, Col, DatePicker, Popover, Row, Typography } from "antd";
-import useGetAllCustomer from "../../customHook/useGetAllCustomer";
-import useGetAllCourts from "../../customHook/useGetAllCourts";
-import useGetBookingsByDate from "../../customHook/useGetBookingsByDate";
-import CustomModal from "./CustomModal";
+import { Button, Card, Col, DatePicker, Popover, Row, Typography } from "antd";
+import useGetAllCourts from "../../hooks/useGetAllCourts";
+import useGetBookingsByDate from "../../hooks/useGetBookingsByDate";
 import UserProfile from "../../components/UserProfile";
 import EventPopover from "./EventPopover";
 import dayjs from "dayjs";
 import DateCarousel from "./DateCrousel";
 import StatsCard from "./StatsCard";
-import { useQuery } from "@tanstack/react-query";
-import { apiCaller } from "../../api/ApiCaller";
+import CreateBookingModal from "./CreateBookingModal";
 
 const localizer = momentLocalizer(moment);
 const switchBUtton = {
@@ -82,7 +79,10 @@ export default function CalendarPage() {
 
   const CustomEvent = ({ event }: { event: any }) => {
     return (
-      <Popover content={<EventPopover event={event} />} title="Event Info">
+      <Popover
+        classNames={{ body: "!p-0" }}
+        content={<EventPopover event={event} />}
+      >
         <div>
           <strong>
             {event.court?.courtName} - ({event?.sport})
@@ -159,58 +159,54 @@ export default function CalendarPage() {
   }, [selectedDate, elements]);
 
   const handleNext = () => {
-    if (viewPort === "Mobile") {
-      const newStart = visibleCourts[1] + 1;
-      const newEnd = Math.min(visibleCourts[1] + 1, totalCourts - 1);
-      if (newStart <= totalCourts - 1) {
-        setVisibleCourts([newStart, newEnd]);
-      }
-    } else if (viewPort === "Tablet") {
-      const newStart = visibleCourts[1] + 1;
-      const newEnd = Math.min(visibleCourts[1] + 2, totalCourts - 1);
-      if (newStart <= totalCourts - 1) {
-        setVisibleCourts([newStart, newEnd]);
-      }
-    } else if (viewPort === "Large") {
-      const newStart = visibleCourts[1] + 1;
-      const newEnd = Math.min(visibleCourts[1] + 3, totalCourts - 1);
-      if (newStart <= totalCourts - 1) {
-        setVisibleCourts([newStart, newEnd]);
-      }
-    } else {
-      const newStart = visibleCourts[1] + 1;
-      const newEnd = Math.min(newStart + 4, totalCourts - 1);
-      if (newStart <= totalCourts - 1) {
-        setVisibleCourts([newStart, newEnd]);
-      }
+    const [start, end] = visibleCourts;
+    let step;
+
+    switch (viewPort) {
+      case "Mobile":
+        step = 1;
+        break;
+      case "Tablet":
+        step = 3;
+        break;
+      case "Large":
+        step = 5;
+        break;
+      default:
+        step = 1;
+    }
+
+    const newStart = Math.min(start + step, totalCourts - step);
+    const newEnd = Math.min(end + step, totalCourts);
+
+    if (newStart < totalCourts) {
+      setVisibleCourts([newStart, newEnd]);
     }
   };
 
   const handlePrev = () => {
-    if (viewPort === "Mobile") {
-      const newEnd = visibleCourts[0] - 1;
-      const newStart = Math.max(visibleCourts[0] - 1, 0);
-      if (newEnd >= 0) {
-        setVisibleCourts([newStart, newEnd]);
-      }
-    } else if (viewPort === "Tablet") {
-      const newEnd = visibleCourts[0] - 1;
-      const newStart = Math.max(visibleCourts[0] - 3, 0);
-      if (newEnd >= 0) {
-        setVisibleCourts([newStart, newEnd]);
-      }
-    } else if (viewPort === "Large") {
-      const newEnd = visibleCourts[0] - 1;
-      const newStart = Math.max(visibleCourts[0] - 5, 0);
-      if (newEnd >= 0) {
-        setVisibleCourts([newStart, newEnd]);
-      }
-    } else {
-      const newEnd = visibleCourts[0] - 1;
-      const newStart = Math.max(newEnd - 8, 0);
-      if (newEnd >= 0) {
-        setVisibleCourts([newStart, newEnd]);
-      }
+    const [start, end] = visibleCourts;
+    let step;
+
+    switch (viewPort) {
+      case "Mobile":
+        step = 1;
+        break;
+      case "Tablet":
+        step = 3;
+        break;
+      case "Large":
+        step = 5;
+        break;
+      default:
+        step = 1;
+    }
+
+    const newStart = Math.max(start - step, 0);
+    const newEnd = Math.max(end - step, step);
+
+    if (newStart >= 0) {
+      setVisibleCourts([newStart, newEnd]);
     }
   };
 
@@ -238,16 +234,10 @@ export default function CalendarPage() {
     };
   }, []);
 
-  console.log(
-    CourtsData?.slice(visibleCourts[0], visibleCourts[1]),
-    "visibleCourt",
-    visibleCourts
-  );
-
   return (
     <Fragment>
-      <Row>
-        <Col sm={24} md={12} >
+      <Row gutter={[16, 16]}>
+        <Col sm={24} md={12}>
           <DatePicker
             allowClear={false}
             format={"DD MMMM YYYY"}
@@ -261,7 +251,7 @@ export default function CalendarPage() {
             onChange={(date: any) => setSelectedDate(date)}
           />
         </Col>
-        <Col sm={24} md={12} >
+        <Col sm={24} md={12}>
           <StatsCard selectedDate={selectedDate} />
         </Col>
       </Row>
@@ -275,63 +265,26 @@ export default function CalendarPage() {
             } as React.CSSProperties
           }
         >
-          {CourtsData?.length >
-            (viewPort === "Tablet" ? 4 : viewPort === "Mobile" ? 0 : 6) &&
-            visibleCourts[0] !== 0 && (
-              <div
-                style={{
-                  ...switchBUtton,
-                  zIndex: "99",
-                  cursor: "pointer",
-                  left: "4%",
-                  position: "absolute",
-                  top: "1.5%",
-                }}
-                onClick={handlePrev}
-              >
-                <SlArrowLeft
-                  style={{ color: "#22356D" }}
-                  className="switch-icon"
-                />
-              </div>
-            )}
-          {CourtsData?.length >
-            (viewPort === "Tablet" ? 4 : viewPort === "Mobile" ? 0 : 6) &&
-            visibleCourts[1] !== totalCourts - 1 && (
-              <div
-                style={{
-                  ...switchBUtton,
-                  zIndex: "99",
-                  cursor: "pointer",
-                  right: "2%",
-                  top: "1.5%",
-                }}
-                onClick={handleNext}
-              >
-                <SlArrowRight
-                  style={{ color: "#22356D" }}
-                  className="switch-icon"
-                />
-              </div>
-            )}
-
           {/* arrow for mobile view only */}
-          {CourtsData?.length > 0 && visibleCourts[0] !== 0 && (
-            <div
-              style={{ ...arrows, zIndex: "99", left: "6%" }}
-              onClick={handlePrev}
-            >
-              <SlArrowLeft style={{ color: "#22356D" }} />
+          <div className="flex flex-row justify-between items-center mb-4">
+            <div>
+              {visibleCourts[0] > 0 && (
+                <Button
+                  icon={<SlArrowLeft style={{ color: "#22356D" }} />}
+                  onClick={handlePrev}
+                />
+              )}
             </div>
-          )}
-          {CourtsData?.length > 0 && visibleCourts[1] !== totalCourts - 1 && (
-            <div
-              style={{ ...arrows, zIndex: "99", right: "-2%" }}
-              onClick={handleNext}
-            >
-              <SlArrowRight style={{ color: "#22356D" }} />
+
+            <div>
+              {visibleCourts[1] < totalCourts && (
+                <Button
+                  icon={<SlArrowRight style={{ color: "#22356D" }} />}
+                  onClick={handleNext}
+                ></Button>
+              )}
             </div>
-          )}
+          </div>
           {/* ---- ends here ---- */}
           <Calendar
             className="rbc-calendar-page"
@@ -400,11 +353,13 @@ export default function CalendarPage() {
         </Box>
       )} */}
 
-        <CustomModal
-          event={event}
-          isOpen={isModalOpen}
-          onOpenChange={() => setIsModalOpen(false)}
-        />
+        {isModalOpen && (
+          <CreateBookingModal
+            event={event}
+            isOpen={isModalOpen}
+            onOpenChange={() => setIsModalOpen(false)}
+          />
+        )}
       </div>
     </Fragment>
   );

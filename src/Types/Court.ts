@@ -11,12 +11,19 @@ export const CourtStatus = {
 
 export type CourtStatus = (typeof CourtStatus)[keyof typeof CourtStatus];
 
+export interface LocationType {
+  state: string;
+  city: string;
+  postal_code?: string;
+  latitude: number;
+  longitude: number;
+}
 export interface ICourt {
   _id?: string;
   courtName: string;
   contactNumber: string;
   address: string;
-  location: { state: string; city: string };
+  location: LocationType;
   ownedBy: string;
   pricePerHour: string;
   sportsAvailable: string[];
@@ -33,7 +40,7 @@ export interface Court {
   contactNumber: string;
   _id: string;
   address: string;
-  location: { city: string; state: string };
+  location: LocationType;
   ownedBy: string;
   pricePerHour: string;
   other_img: string[];
@@ -53,4 +60,16 @@ export interface CourtAdminView {
   pricePerHour: number;
   sportsAvailable: string[];
   workingHours: { start: string; end: string };
+}
+
+interface Slot {
+  startTime: string;
+  endTime: string;
+}
+
+export interface IavailableSlots {
+  courtId: string;
+  court: Court;
+  availableSlots: Slot[];
+  bookedSlots?: Record<string, string[]>; // Optional: booked slots per date
 }

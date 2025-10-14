@@ -1,7 +1,7 @@
 import { Button } from "antd";
 import React from "react";
 import { IoCheckmarkCircleOutline } from "react-icons/io5";
-import { uploadApiCaller } from "../../api/uploadApiCaller";
+import { appApiCaller } from "../../api/appApiCaller";
 
 interface PlanCardProps {
   plan: any;

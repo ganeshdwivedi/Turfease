@@ -19,3 +19,10 @@ export interface IGetAdmin {
   turf: CourtAdminView[];
   status: string;
 }
+
+export interface ISidebarItem {
+  key: string;
+  path: string;
+  icon: React.ReactNode;
+  label: string;
+}

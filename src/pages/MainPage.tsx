@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { sidebarItems } from "../features/SideBar";
-import { Button, Layout, Menu, Drawer, Grid ,message} from "antd";
+import { Button, Layout, Menu, Drawer, Grid } from "antd";
 import Sider from "antd/es/layout/Sider";
 import { Content, Header } from "antd/es/layout/layout";
 import { AiOutlineMenuFold, AiOutlineMenuUnfold } from "react-icons/ai";
@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import type { RootState } from "../redux/store";
 import { IoSettingsOutline } from "react-icons/io5";
 import Breadcrumbs from "../features/BreadCrumbs";
+import { useToast } from "../components/ToastProvider";
 
 const { useBreakpoint } = Grid;
 
@@ -25,20 +26,20 @@ const siderStyle: React.CSSProperties = {
 };
 
 const MainPage: React.FC<any> = () => {
+  const antToast = useToast();
   const authStateUser: any = useSelector((state: RootState) => state.auth.user);
   const { pathname } = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const navigate = useNavigate();
   const currentActiveKey = pathname.split("/")[2] || "calendar";
-  console.log(currentActiveKey,"currentActive",sidebarItems);
 
   const screens = useBreakpoint();
   const isMobile = !screens.md; // md breakpoint and below = mobile/tablet
 
   useEffect(() => {
     const handleOffline = () => {
-      message.error("Looks Like you are Offline");
+      antToast.error("Looks Like you are Offline");
       // show offline notification here if needed
     };
     window.addEventListener("offline", handleOffline);
@@ -78,7 +79,7 @@ const MainPage: React.FC<any> = () => {
       </div>
 
       <Menu
-        theme="dark"   // 👈 dark theme (white text, transparent bg)
+        theme="dark" // 👈 dark theme (white text, transparent bg)
         mode="inline"
         style={{
           backgroundColor: "#508267", // 👈 match drawer bg
@@ -86,8 +87,8 @@ const MainPage: React.FC<any> = () => {
           borderRight: "none",
         }}
         className="!h-auto"
-        onClick={(item) => {
-          navigate(item?.path);
+        onClick={(item: any) => {
+          navigate(item?.key);
           if (isMobile) setDrawerOpen(false); // auto close drawer on mobile
         }}
         defaultSelectedKeys={[currentActiveKey]}
@@ -98,6 +99,19 @@ const MainPage: React.FC<any> = () => {
 
   return (
     <Layout>
+      <style>
+        {`
+        .ant-drawer-header .ant-drawer-header-title{ 
+          display:flex;
+          justify-content: end;
+        }
+
+        .ant-drawer-header .ant-drawer-close{
+         color:white;
+        }
+        
+        `}
+      </style>
       {!isMobile ? (
         // Desktop Sidebar
         <Sider
@@ -112,12 +126,12 @@ const MainPage: React.FC<any> = () => {
       ) : (
         // Mobile Drawer
         <Drawer
-          className="!min-w-[230px] !w-[70%]"
+          className="!min-w-[230px] !w-[70%] !rounded-r-4xl"
           placement="left"
           onClose={() => setDrawerOpen(false)}
           open={drawerOpen}
-          closable={false}
-          bodyStyle={{ padding: 0 ,backgroundColor: "#508267",}}
+          closable
+          style={{ padding: 0, backgroundColor: "#508267" }}
         >
           {SidebarContent}
         </Drawer>
@@ -127,9 +141,7 @@ const MainPage: React.FC<any> = () => {
         <Header style={{ padding: 0, background: "#fff" }}>
           <Button
             type="text"
-            icon={
-              collapsed ? <AiOutlineMenuFold /> : <AiOutlineMenuUnfold />
-            }
+            icon={collapsed ? <AiOutlineMenuFold /> : <AiOutlineMenuUnfold />}
             onClick={() =>
               isMobile ? setDrawerOpen(true) : setCollapsed(!collapsed)
             }
@@ -145,7 +157,7 @@ const MainPage: React.FC<any> = () => {
           style={{
             margin: "24px 16px 0",
             overflow: "auto",
-            height: "calc(100vh - 112px)",
+            height: "calc(100vh - 100px)",
           }}
         >
           <Breadcrumbs />

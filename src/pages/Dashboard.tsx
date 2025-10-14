@@ -163,7 +163,7 @@ const Header = () => {
             Register Your Court
           </Link>
           <Link
-            to="/book/signin"
+            to="/customer/signin"
             className="bg-brand-green text-white rounded-full px-6 py-2 text-sm font-semibold hover:opacity-90 transition duration-300 shadow-lg"
           >
             Book a Slot
@@ -205,7 +205,7 @@ const Header = () => {
             Register Your Court
           </Link>
           <Link
-            to="/book/signin"
+            to="/customer/signin"
             className="block w-full text-center mt-2 bg-brand-green text-white rounded-full px-6 py-2 text-sm font-semibold hover:opacity-90 transition duration-300"
           >
             Book a Slot
@@ -237,7 +237,7 @@ const HeroSection = () => (
           I'm a Court Owner
         </Link>
         <Link
-          to="/book/signin"
+          to="/customer/signin"
           className="w-full sm:w-auto bg-brand-green text-white rounded-full px-8 py-3 font-semibold hover:opacity-90 transition duration-300 shadow-lg transform hover:scale-105"
         >
           I'm a Player

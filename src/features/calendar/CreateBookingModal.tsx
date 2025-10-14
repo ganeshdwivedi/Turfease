@@ -16,7 +16,7 @@ import type { ICreateBooking } from "../../Types/Booking";
 import { useCreateBooking } from "../../api/Calendar";
 import { CustomerSearchSelect } from "../../components/Search/CustomerSearch";
 
-const CustomModal = ({
+const CreateBookingModal = ({
   isOpen,
   onOpenChange,
   event,
@@ -32,32 +32,24 @@ const CustomModal = ({
     formState: { errors },
     watch,
     reset,
-  } = useForm<ICreateBooking>();
-
-  useEffect(() => {
-    reset({
+  } = useForm<ICreateBooking>({
+    defaultValues: {
       startTime: dayjs(event?.start).format("HH:mm:ss"),
       endTime: dayjs(event?.end).format("HH:mm:ss"),
-    });
-  }, [event]);
+    },
+  });
 
   const { endTime, startTime } = watch();
 
   const onSubmit = async (data: ICreateBooking) => {
     const bookingDate = moment(event?.start).format("YYYY-MM-DD");
-    const duration = dayjs(endTime, "HH:mm:ss").diff(
-      dayjs(startTime, "HH:mm:ss"),
-      "hour",
-      true
-    );
-    const totalAmount = duration * Number(450);
 
     const apidata = {
       ...data,
       startTime: startTime,
+      endTime: endTime,
       court: event?.resourceId,
       bookingDate,
-      payment: { totalAmount },
     };
 
     CreateBooking(apidata, {
@@ -172,4 +164,4 @@ const CustomModal = ({
   );
 };
 
-export default CustomModal;
+export default CreateBookingModal;
