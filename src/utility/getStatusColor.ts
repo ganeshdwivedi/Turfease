@@ -1,5 +1,5 @@
 const getStatusColor = (status: string) => {
-  switch (status.toLowerCase()) {
+  switch (status) {
     case "initiated":
       return "blue";
     case "pending":
