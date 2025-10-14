@@ -147,8 +147,8 @@ const AddressAutocomplete = ({
       if (onPlaceSelected) {
         onPlaceSelected({
           ...value,
-          latitude: pendingLocation.lat.toString(),
-          longitude: pendingLocation.lng.toString(),
+          latitude: pendingLocation.lat,
+          longitude: pendingLocation.lng,
         });
       }
     }
