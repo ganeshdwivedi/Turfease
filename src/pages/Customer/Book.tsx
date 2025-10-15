@@ -50,7 +50,7 @@ const Book = () => {
   });
 
   return (
-    <div>
+    <div className="!overflow-x-hidden">
       <div className="mb-4">
         <Controller
           control={control}

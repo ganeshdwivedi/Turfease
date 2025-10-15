@@ -8,8 +8,8 @@ import Footer from "./Footer";
 const CustomerMainPage = () => {
   return (
     <Layout>
-      <Header className="!bg-white/90 backdrop-blur-lg sticky top-0 z-40 border-b border-gray-200">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <Header className="!bg-white/90 !p-0 backdrop-blur-lg sticky top-0 z-40 border-b border-gray-200">
+        <div className="md:container !w-full !mx-0 md:!mx-auto !px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <a href="#" className="text-3xl font-bold text-brand-green">
               Courtify

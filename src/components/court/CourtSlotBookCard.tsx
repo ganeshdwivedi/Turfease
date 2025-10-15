@@ -82,7 +82,7 @@ const CourtSlotBookCard: React.FC<CourtCardProps> = ({
           <p className="text-sm font-semibold text-gray-600 mb-3">
             Available Slots for :
           </p>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+          <div className="grid !grid-cols-2 md:grid-cols-3 gap-2">
             {availableSlots?.length > 0 ? (
               availableSlots?.map((slot, index: number) => {
                 const slotLabel = `${dayjs(slot?.startTime, "HH:mm:ss").format(
