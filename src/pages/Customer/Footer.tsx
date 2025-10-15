@@ -16,19 +16,19 @@ const Footer = () => (
         </div>
         <div>
           <h4 className="font-semibold text-gray-800">Company</h4>
-          <ul className="mt-4 space-y-2 text-gray-600 text-sm">
+          <ul className="mt-4 space-y-2 !text-gray-600 text-sm">
             <li>
-              <Link to="#" className="hover:!text-[#508267]">
+              <Link to="/" className="hover:!text-[#508267] !text-gray-600">
                 About Us
               </Link>
             </li>
             <li>
-              <Link to="#" className="hover:!text-[#508267]">
+              <Link to="/" className="hover:!text-[#508267] !text-gray-600">
                 Careers
               </Link>
             </li>
             <li>
-              <Link to="#" className="hover:!text-[#508267]">
+              <Link to="/" className="hover:!text-[#508267] !text-gray-600">
                 Press
               </Link>
             </li>
@@ -38,17 +38,17 @@ const Footer = () => (
           <h4 className="font-semibold text-gray-800">Support</h4>
           <ul className="mt-4 space-y-2 text-gray-600 text-sm">
             <li>
-              <Link to="#" className="hover:!text-[#508267]">
+              <Link to="#" className="hover:!text-[#508267] !text-gray-600">
                 Help Center
               </Link>
             </li>
             <li>
-              <Link to="#" className="hover:!text-[#508267]">
+              <Link to="#" className="hover:!text-[#508267] !text-gray-600">
                 Contact Us
               </Link>
             </li>
             <li>
-              <Link to="#" className="hover:!text-[#508267]">
+              <Link to="#" className="hover:!text-[#508267] !text-gray-600">
                 FAQ
               </Link>
             </li>
@@ -58,12 +58,12 @@ const Footer = () => (
           <h4 className="font-semibold text-gray-800">Legal</h4>
           <ul className="mt-4 space-y-2 text-gray-600 text-sm">
             <li>
-              <Link to="#" className="hover:!text-[#508267]">
+              <Link to="#" className="hover:!text-[#508267] !text-gray-600">
                 Terms of Service
               </Link>
             </li>
             <li>
-              <Link to="#" className="hover:!text-[#508267]">
+              <Link to="#" className="hover:!text-[#508267] !text-gray-600">
                 Privacy Policy
               </Link>
             </li>

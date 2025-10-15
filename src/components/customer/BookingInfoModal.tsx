@@ -24,7 +24,7 @@ const BookingInfoModal = ({
   isOpen,
 }: BookingInfoModalProps) => {
   const [showBill, setShowBill] = React.useState(true);
-  const isUpcoming = booking?.status === "Upcoming";
+  const isUpcoming = dayjs(booking?.bookingDate).isAfter(dayjs().add(1, "day"));
   const isPayOnArrival = booking?.payment?.paymentMode === "pay_on_arrival";
 
   return (
