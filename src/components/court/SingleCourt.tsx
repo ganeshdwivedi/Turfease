@@ -11,7 +11,9 @@ import { FiEdit } from "react-icons/fi";
 
 declare global {
   interface Window {
-    umami?: (event: string, data?: Record<string, any>) => void;
+    umami?: {
+      track: (event: string, data?: Record<string, any>) => void;
+    };
   }
 }
 
@@ -20,7 +22,8 @@ const SingleCourt = ({ court }: { court: Court }) => {
 
   useEffect(() => {
     if (window.umami) {
-      window.umami("viewed-court", { courtId: court?._id });
+      console.log("umami loaded---");
+      window.umami?.track("viewed-court", { courtId: court?._id });
     } else {
       console.warn("Umami not loaded yet");
     }

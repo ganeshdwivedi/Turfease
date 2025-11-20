@@ -13,7 +13,9 @@ import { onMessage } from "firebase/messaging";
 
 declare global {
   interface Window {
-    umami?: (event: string, data?: Record<string, any>) => void;
+    umami?: {
+      track: (event: string, data?: Record<string, any>) => void;
+    };
   }
 }
 
@@ -69,7 +71,9 @@ function App() {
 
   useEffect(() => {
     if (window.umami) {
-      window.umami("User Viewing", {
+      console.log("umami loaded---");
+
+      window.umami.track("User Viewing", {
         userId: (authState as any)?.user?._id || "no login user",
       });
     } else {
