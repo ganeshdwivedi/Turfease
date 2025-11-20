@@ -11,6 +11,12 @@ import toast from "react-hot-toast";
 import { GenerateToken, messaging } from "./notifications/firebase";
 import { onMessage } from "firebase/messaging";
 
+declare global {
+  interface Window {
+    umami?: (event: string, data?: Record<string, any>) => void;
+  }
+}
+
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
   const authState = useSelector((state: RootState) => state.auth);
@@ -25,10 +31,10 @@ function App() {
           user,
         })
       );
-      setLoading(false);
     } catch (error: any) {
       toast.error(error);
     }
+    setLoading(false);
   };
 
   // useEffect(() => {
@@ -60,6 +66,16 @@ function App() {
       setLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    if (window.umami) {
+      window.umami("User Viewing", {
+        userId: (authState as any)?.user?._id || "no login user",
+      });
+    } else {
+      console.warn("Umami not loaded yet");
+    }
+  }, [authState]);
 
   if (loading) {
     return <div>Loading..</div>;

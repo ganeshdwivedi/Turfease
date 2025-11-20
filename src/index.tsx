@@ -9,9 +9,18 @@ import { Toaster } from "react-hot-toast";
 import { Provider } from "react-redux";
 import { store } from "./redux/store";
 
+// Add Umami Tracking Script
+const umamiScript = document.createElement("script");
+umamiScript.async = true;
+umamiScript.defer = true;
+umamiScript.src = "https://umami-murex-omega.vercel.app/script.js";
+umamiScript.setAttribute("data-website-id", "YOUR_WEBSITE_ID");
+document.head.appendChild(umamiScript);
+
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
+
 const queryClient = new QueryClient();
 
 root.render(
@@ -27,7 +36,4 @@ root.render(
   </React.StrictMode>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();

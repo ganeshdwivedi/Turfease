@@ -3,11 +3,13 @@ import React, { useState } from "react";
 import CourtFilter from "../features/court/CourtFilter";
 import SingleCourtData from "../features/court/SingleCourtData";
 import { Court as CourtInter } from "../Types/Court";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { openModal, selectCourt } from "../redux/courtSlice";
 
 const Court = () => {
   const [selectedSport, setSelectedSport] = useState<string>("");
   const [AllCourts, setAllCourts] = useState<CourtInter[]>([]);
+  const dispatch = useDispatch();
   return (
     <div>
       <div className="bg-[#508267] h-14 p-5 flex flex-row items-center justify-between">
@@ -28,7 +30,7 @@ const Court = () => {
               <SelectItem key={court}>{court}</SelectItem>
             ))}
           </Select>
-          <Button>Add new court</Button>
+          <Button onClick={() => dispatch(openModal())}>Add new court</Button>
         </div>
       </div>
       <CourtFilter

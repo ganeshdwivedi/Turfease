@@ -32,7 +32,7 @@ interface ChildComponentProps {
   setAllCourts: React.Dispatch<React.SetStateAction<CourtInter[]>>;
 }
 
-const SingleCourtData: React.FC<ChildComponentProps> = ({ setAllCourts }) => {
+const SingleCourtData: React.FC<ChildComponentProps> = () => {
   const [isProfileUploading, setisProfileUploading] = useState<boolean>(false);
   const queryClient = useQueryClient();
   const { isSuccess, isError, data, setCourtID } = useGetCourtByID();
