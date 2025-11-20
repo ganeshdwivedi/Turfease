@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { selectCourt } from "../../redux/courtSlice";
 import type { Court } from "../../Types/Court";
@@ -10,6 +10,18 @@ import { MdCurrencyRupee, MdOutlineSportsVolleyball } from "react-icons/md";
 import { FiEdit } from "react-icons/fi";
 const SingleCourt = ({ court }: { court: Court }) => {
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if ((window as any).umami) {
+      console.log("umami loaded---");
+
+      (window as any).umami.track("User Viewing", {
+        userId: court?._id || "no court Id",
+      });
+    } else {
+      console.warn("Umami not loaded yet");
+    }
+  }, [court]);
 
   return (
     <Card

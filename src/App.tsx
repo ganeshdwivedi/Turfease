@@ -29,6 +29,18 @@ function App() {
   };
 
   useEffect(() => {
+    if ((window as any).umami) {
+      console.log("umami loaded---");
+
+      (window as any).umami.track("User Viewing", {
+        userId: (authState as any)?.user?._id || "no login user",
+      });
+    } else {
+      console.warn("Umami not loaded yet");
+    }
+  }, [authState]);
+
+  useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
     if (accessToken) {
       GETUSER();
