@@ -11,14 +11,6 @@ import toast from "react-hot-toast";
 import { GenerateToken, messaging } from "./notifications/firebase";
 import { onMessage } from "firebase/messaging";
 
-declare global {
-  interface Window {
-    umami?: {
-      track: (event: string, data?: Record<string, any>) => void;
-    };
-  }
-}
-
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
   const authState = useSelector((state: RootState) => state.auth);
@@ -70,10 +62,10 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (window.umami) {
+    if ((window as any).umami) {
       console.log("umami loaded---");
 
-      window.umami.track("User Viewing", {
+      (window as any).umami.track("User Viewing", {
         userId: (authState as any)?.user?._id || "no login user",
       });
     } else {

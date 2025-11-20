@@ -9,21 +9,13 @@ import { FaExternalLinkAlt } from "react-icons/fa";
 import { MdOutlineSportsVolleyball } from "react-icons/md";
 import { FiEdit } from "react-icons/fi";
 
-declare global {
-  interface Window {
-    umami?: {
-      track: (event: string, data?: Record<string, any>) => void;
-    };
-  }
-}
-
 const SingleCourt = ({ court }: { court: Court }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (window.umami) {
+    if ((window as any)?.umami) {
       console.log("umami loaded---");
-      window.umami?.track("viewed-court", { courtId: court?._id });
+      (window as any)?.umami?.track("viewed-court", { courtId: court?._id });
     } else {
       console.warn("Umami not loaded yet");
     }
