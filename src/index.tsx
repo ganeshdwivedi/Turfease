@@ -14,7 +14,10 @@ const umamiScript = document.createElement("script");
 umamiScript.async = true;
 umamiScript.defer = true;
 umamiScript.src = "https://umami-murex-omega.vercel.app/script.js";
-umamiScript.setAttribute("data-website-id", "YOUR_WEBSITE_ID");
+umamiScript.setAttribute(
+  "data-website-id",
+  "4c1d8862-918d-4610-9513-27943fa7fc91"
+);
 document.head.appendChild(umamiScript);
 
 const root = ReactDOM.createRoot(
