@@ -11,24 +11,6 @@ import { FiEdit } from "react-icons/fi";
 const SingleCourt = ({ court }: { court: Court }) => {
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if ((window as any).umami) {
-      console.log("umami loaded---");
-
-      if (!court) {
-        (window as any).umami.track("Court Create");
-      } else {
-        (window as any).umami.track("Court View", {
-          courtID: court?._id || "no court Id",
-          courtName: court?.courtName,
-          courtImage: court?.profile_img,
-        });
-      }
-    } else {
-      console.warn("Umami not loaded yet");
-    }
-  }, [court]);
-
   return (
     <Card
       key={court._id}
