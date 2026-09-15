@@ -1,0 +1,37 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap");
+
+body {
+  font-family: "Poppins", sans-serif;
+}
+
+.text-brand-green {
+  color: #508267;
+}
+
+.bg-brand-green {
+  background-color: #508267;
+}
+
+.border-brand-green {
+  border-color: #508267;
+}
+
+.focus\:ring-brand-green:focus {
+  --tw-ring-color: #508267;
+}
+
+.focus\:border-brand-green:focus {
+  border-color: #508267;
+}
+
+.section-fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.section-fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
