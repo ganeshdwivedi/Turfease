@@ -11,6 +11,7 @@ import { RiMapPin2Fill } from "react-icons/ri";
 import handleOpenMap from "../../utility/mapOpen";
 import { useMutation } from "@tanstack/react-query";
 import { appApiCaller } from "../../api/appApiCaller";
+import { formatSlotRange } from "../../utility/formatTime";
 
 interface CourtCardProps {
   courtData: IavailableSlots;
@@ -85,9 +86,7 @@ const CourtSlotBookCard: React.FC<CourtCardProps> = ({
           <div className="grid !grid-cols-2 md:grid-cols-3 gap-2">
             {availableSlots?.length > 0 ? (
               availableSlots?.map((slot, index: number) => {
-                const slotLabel = `${dayjs(slot?.startTime, "HH:mm:ss").format(
-                  "hh:mm"
-                )} - ${dayjs(slot?.endTime, "HH:mm:ss").format("hh:mm a")}`;
+                const slotLabel = formatSlotRange(slot?.startTime, slot?.endTime);
                 const isBooked = false;
 
                 return (

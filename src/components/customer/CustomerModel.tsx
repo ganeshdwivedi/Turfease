@@ -56,7 +56,7 @@ const CustomerModel = ({
   // all bookings of selectedCustomer
   const { register, watch, control, setValue, handleSubmit, reset } =
     useForm<formInput>();
-  const [selectedKey, setSelectedKey] = useState<string>("upcoming");
+  const [selectedKey, setSelectedKey] = useState<string>("config");
   const { name, email, phone_number, password, profile } = watch();
 
   useEffect(() => {

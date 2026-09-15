@@ -14,6 +14,7 @@ import { RiMapPin2Fill } from "react-icons/ri";
 import handleOpenMap from "../../utility/mapOpen";
 import { IoWallet } from "react-icons/io5";
 import { Controller, useForm } from "react-hook-form";
+import { formatSlotRange } from "../../utility/formatTime";
 
 interface FormValues {
   coupon: string;
@@ -40,6 +41,8 @@ const GlobalBookingModal = () => {
     });
   const { coupon, paymentMode } = watch();
   const [step, setStep] = useState(1);
+
+  console.log(bookingState)
 
   // Preparing payload for booking
   const payload = {
@@ -92,12 +95,9 @@ const GlobalBookingModal = () => {
                   </strong>
                   {dayjs(data?.booking?.date).format("DD MMMM YYYY ")}
                   <p>
-                    {dayjs(data?.booking?.startTime, "HH:mm:ss").format(
-                      "hh:mm"
-                    )}{" "}
-                    -{" "}
-                    {dayjs(data?.booking?.endTime, "HH:mm:ss").format(
-                      "hh:mm a"
+                    {formatSlotRange(
+                      data?.booking?.startTime,
+                      data?.booking?.endTime
                     )}
                   </p>
                 </div>
