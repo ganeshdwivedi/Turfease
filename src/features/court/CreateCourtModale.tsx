@@ -21,7 +21,6 @@ import { appApiCaller } from "../../api/appApiCaller";
 import { closeModal, unSelectCourt } from "../../redux/courtSlice";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiCaller } from "../../api/ApiCaller";
-import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import AddressAutocomplete from "../../components/select/SelectAdress";
 import { useToast } from "../../components/ToastProvider";
 
@@ -481,15 +480,10 @@ const CreateCourtModale = () => {
             name="location"
             render={({ field: { onChange, value } }) => (
               <Form.Item label="Select Location">
-                <LoadScript
-                  googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_KEY!}
-                  libraries={["places"]}
-                >
-                  <AddressAutocomplete
-                    value={value}
-                    onPlaceSelected={(data: any) => onChange(data)}
-                  />
-                </LoadScript>
+                <AddressAutocomplete
+                  value={value}
+                  onPlaceSelected={(data: any) => onChange(data)}
+                />
               </Form.Item>
             )}
           />

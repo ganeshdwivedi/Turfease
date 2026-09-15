@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 
 import { store } from "./redux/store";
 import "./index.css";
+import "leaflet/dist/leaflet.css";
 import App from "./App.tsx";
 import { Provider } from "react-redux";
 import Providers from "./features/QueryClient.tsx";

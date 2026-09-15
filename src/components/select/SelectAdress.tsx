@@ -1,158 +1,173 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Button, Input, Popconfirm, Select } from "antd";
-import { HiLocationMarker } from "react-icons/hi";
+import { Button, Select } from "antd";
 import { CiLocationOn, CiSearch } from "react-icons/ci";
-import { GoogleMap, Marker } from "@react-google-maps/api";
 import type { LocationType } from "../../Types/Court";
+import LeafletMap from "../map/LeafletMap";
 
 interface AddressAutocompleteProps {
   onPlaceSelected: (data: LocationType | null) => void;
   value: LocationType;
 }
 
-const mapContainerStyle = {
-  width: "100%",
-  height: "400px",
-  marginTop: "20px",
-};
-const AddressAutocomplete = ({
+const AddressAutocomplete: React.FC<AddressAutocompleteProps> = ({
   onPlaceSelected,
   value,
-}: AddressAutocompleteProps) => {
+}) => {
   const { latitude, longitude } = value || {};
   const [pendingLocation, setPendingLocation] = useState<{
     lat: number;
     lng: number;
   } | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [inputValue, setInputValue] = useState<string | null>(null);
+  const [inputValue, setInputValue] = useState<string | undefined>(undefined);
   const [predictions, setPredictions] = useState<any[]>([]);
-  const autocompleteService =
-    useRef<google.maps.places.AutocompleteService | null>(null);
-  const placesService = useRef<google.maps.places.PlacesService | null>(null);
+  const [isSearching, setIsSearching] = useState(false);
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Initialize services
-  useEffect(() => {
-    if (!autocompleteService.current && window.google) {
-      autocompleteService.current =
-        new window.google.maps.places.AutocompleteService();
-      const dummyDiv = document.createElement("div");
-      placesService.current = new window.google.maps.places.PlacesService(
-        dummyDiv
-      );
+  // Fetch autocomplete predictions from OpenStreetMap Nominatim
+  const fetchPredictions = async (query: string) => {
+    if (!query || query.trim().length < 2) {
+      setPredictions([]);
+      setIsSearching(false);
+      return;
     }
+
+    try {
+      setIsSearching(true);
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+          query
+        )}&addressdetails=1&limit=6`
+      );
+      if (!res.ok) throw new Error("Search failed");
+      const data = await res.json();
+      setPredictions(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Nominatim search error:", err);
+      setPredictions([]);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handleSearch = (text: string) => {
+    setInputValue(text);
+    if (debounceTimer.current) {
+      clearTimeout(debounceTimer.current);
+    }
+    debounceTimer.current = setTimeout(() => {
+      fetchPredictions(text);
+    }, 400);
+  };
+
+  // Clean up timer on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    };
   }, []);
 
-  // Fetch autocomplete predictions
-  const fetchPredictions = (value: string) => {
-    if (!autocompleteService.current) return;
-    autocompleteService.current.getPlacePredictions(
-      { input: value },
-      (preds, status) => {
-        if (status === google.maps.places.PlacesServiceStatus.OK && preds) {
-          setPredictions(preds);
-        } else {
-          setPredictions([]);
-        }
-      }
-    );
-  };
-
   // When a prediction is selected
-  const handleSelect = async (place: any) => {
-    if (!placesService.current) return;
-
-    placesService.current.getDetails(
-      {
-        placeId: place,
-        fields: ["address_components", "geometry", "name"],
-      },
-      (result: any, status) => {
-        if (status === google.maps.places.PlacesServiceStatus.OK && result) {
-          const addressDetails = {
-            state: "",
-            city: "",
-            postal_code: "",
-            latitude:
-              result.geometry && result.geometry.location
-                ? result.geometry.location.lat().toString()
-                : "",
-            longitude:
-              result.geometry && result.geometry.location
-                ? result.geometry.location.lng().toString()
-                : "",
-          };
-
-          for (const component of result?.address_components) {
-            console.log(component, "========>component");
-            const componentType = component.types[0];
-            switch (componentType) {
-              case "administrative_area_level_1":
-                addressDetails.state = component.long_name;
-                break;
-              case "locality":
-                addressDetails.city = component.long_name;
-                break;
-              case "postal_code":
-                addressDetails.postal_code = component.long_name;
-                break;
-              default:
-                break;
-            }
-          }
-
-          // If city is not found, try administrative_area_level_2
-          if (!addressDetails.city) {
-            for (const component of result?.address_components) {
-              if (component.types.includes("administrative_area_level_2")) {
-                addressDetails.city = component.long_name;
-                break;
-              }
-            }
-          }
-
-          onPlaceSelected(addressDetails);
-          setInputValue(result.name || place.description);
-          setPredictions([]);
-        }
-      }
+  const handleSelect = (placeId: string) => {
+    const selected = predictions.find(
+      (pred) => String(pred.place_id) === String(placeId)
     );
+    if (!selected) return;
+
+    const addr = selected.address || {};
+    const state =
+      addr.state || addr.province || addr.region || addr.state_district || "";
+    const city =
+      addr.city ||
+      addr.town ||
+      addr.village ||
+      addr.municipality ||
+      addr.county ||
+      "";
+    const postal_code = addr.postcode || "";
+
+    const addressDetails: LocationType = {
+      state,
+      city,
+      postal_code,
+      latitude: parseFloat(selected.lat),
+      longitude: parseFloat(selected.lon),
+    };
+
+    onPlaceSelected(addressDetails);
+    setInputValue(selected.display_name);
+    setPredictions([]);
   };
+
   const handleClear = () => {
-    setInputValue(null);
+    setInputValue(undefined);
     setPredictions([]);
     onPlaceSelected(null);
   };
 
-  const handleMarkerDragEnd = (event: google.maps.MapMouseEvent) => {
-    if (!event.latLng) return;
-    const lat = event.latLng.lat();
-    const lng = event.latLng.lng();
-    setPendingLocation({ lat: event.latLng.lat(), lng: event.latLng.lng() });
+  // Marker drag end
+  const handleMarkerDragEnd = (lat: number, lng: number) => {
+    setPendingLocation({ lat, lng });
     setShowConfirm(true);
-
-    console.log({ lat, lng });
-    // if (onPlaceSelected) {
-    //   onPlaceSelected({
-    //     ...value,
-    //     latitude: lat.toString(),
-    //     longitude: lng.toString(),
-    //   });
-    // }
-    // Pass updated location back to parent (optional)
   };
 
-  const confirmDrag = () => {
-    if (pendingLocation) {
-      if (onPlaceSelected) {
+  // Map click
+  const handleMapClick = (lat: number, lng: number) => {
+    setPendingLocation({ lat, lng });
+    setShowConfirm(true);
+  };
+
+  const confirmDrag = async () => {
+    if (!pendingLocation) return;
+
+    try {
+      // Reverse geocode new coordinate to get updated address details
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${pendingLocation.lat}&lon=${pendingLocation.lng}&addressdetails=1`
+      );
+      if (res.ok) {
+        const data = await res.json();
+        const addr = data.address || {};
+        const state =
+          addr.state || addr.province || addr.region || value?.state || "";
+        const city =
+          addr.city ||
+          addr.town ||
+          addr.village ||
+          addr.municipality ||
+          addr.county ||
+          value?.city ||
+          "";
+        const postal_code = addr.postcode || value?.postal_code || "";
+
+        onPlaceSelected({
+          state,
+          city,
+          postal_code,
+          latitude: pendingLocation.lat,
+          longitude: pendingLocation.lng,
+        });
+
+        if (data.display_name) {
+          setInputValue(data.display_name);
+        }
+      } else {
         onPlaceSelected({
           ...value,
           latitude: pendingLocation.lat,
           longitude: pendingLocation.lng,
         });
       }
+    } catch {
+      onPlaceSelected({
+        ...value,
+        latitude: pendingLocation.lat,
+        longitude: pendingLocation.lng,
+      });
     }
+
     setShowConfirm(false);
+    setPendingLocation(null);
   };
 
   const cancelDrag = () => {
@@ -160,81 +175,82 @@ const AddressAutocomplete = ({
     setShowConfirm(false);
   };
 
+  const hasCoordinates =
+    latitude !== undefined &&
+    longitude !== undefined &&
+    !isNaN(Number(latitude)) &&
+    !isNaN(Number(longitude)) &&
+    (Number(latitude) !== 0 || Number(longitude) !== 0);
+
   return (
-    <div>
+    <div className="w-full">
       <Select
         prefix={<CiSearch />}
         showSearch
         value={inputValue}
-        placeholder="Enter your address"
+        placeholder="Search address or location..."
         className="!w-full"
-        onSearch={(value: string) => {
-          setInputValue(value);
-          fetchPredictions(value);
-        }}
+        onSearch={handleSearch}
         onClear={handleClear}
         allowClear
-        onSelect={(value) => handleSelect(value)}
+        onSelect={handleSelect}
         filterOption={false}
-        notFoundContent={null}
+        loading={isSearching}
+        notFoundContent={isSearching ? "Searching..." : null}
       >
         {predictions.map((pred) => (
-          <Select.Option key={pred?.place_id} value={pred.place_id}>
-            <div className="grid grid-cols-10 gap-2">
-              <CiLocationOn className="text-xl mr-2 mt-1 !col-span-1" />
-              <span className="leading-[18px] !col-span-9 break-words whitespace-normal">
-                {pred.description}
+          <Select.Option key={pred.place_id} value={String(pred.place_id)}>
+            <div className="grid grid-cols-10 gap-2 items-start py-1">
+              <CiLocationOn className="text-xl text-emerald-600 mt-0.5 col-span-1 flex-shrink-0" />
+              <span className="text-xs leading-snug col-span-9 break-words whitespace-normal">
+                {pred.display_name}
               </span>
             </div>
           </Select.Option>
         ))}
       </Select>
-      {longitude && latitude && (
-        <div>
-          {showConfirm && (
-            <div
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                zIndex: 1001,
-                width: "100%",
-              }}
-            >
-              <Popconfirm
-                title="Confirm location change?"
-                onConfirm={confirmDrag}
-                onCancel={cancelDrag}
-                okText="Yes"
-                cancelText="No"
-                open={showConfirm}
-              >
-                <div /> {/* Popconfirm requires a child */}
-              </Popconfirm>
+
+      {showConfirm && pendingLocation && (
+        <div className="mt-3 p-3 bg-emerald-50 border border-emerald-200 rounded-lg flex items-center justify-between text-sm shadow-sm">
+          <div className="text-emerald-800">
+            <span className="font-semibold">Move pin here?</span>
+            <div className="text-xs text-emerald-600">
+              Lat: {pendingLocation.lat.toFixed(5)}, Lng: {pendingLocation.lng.toFixed(5)}
             </div>
-          )}
-          <GoogleMap
-            options={{
-              mapTypeControl: false, // hides Satellite/Terrain toggle
-              streetViewControl: false, // optional: hide Street View pegman
-              fullscreenControl: false, // optional: hide fullscreen button
-            }}
-            mapContainerStyle={mapContainerStyle}
-            center={{
-              lat: Number(latitude) || 0,
-              lng: Number(longitude) || 0,
-            }}
+          </div>
+          <div className="flex gap-2">
+            <Button size="small" onClick={cancelDrag}>
+              Cancel
+            </Button>
+            <Button
+              size="small"
+              type="primary"
+              className="!bg-emerald-700 hover:!bg-emerald-800"
+              onClick={confirmDrag}
+            >
+              Update Pin
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {hasCoordinates && (
+        <div className="mt-4">
+          <div className="text-xs text-gray-500 mb-1 flex items-center justify-between">
+            <span>Tip: Drag marker or click anywhere on map to adjust location</span>
+            <span>
+              {Number(latitude).toFixed(4)}, {Number(longitude).toFixed(4)}
+            </span>
+          </div>
+          <LeafletMap
+            lat={Number(latitude)}
+            lng={Number(longitude)}
             zoom={15}
-          >
-            <Marker
-              draggable
-              onDragEnd={handleMarkerDragEnd}
-              position={{
-                lat: Number(latitude) || 0,
-                lng: Number(longitude) || 0,
-              }}
-            />
-          </GoogleMap>
+            draggable={true}
+            onMarkerDragEnd={handleMarkerDragEnd}
+            onMapClick={handleMapClick}
+            height="360px"
+          />
         </div>
       )}
     </div>
