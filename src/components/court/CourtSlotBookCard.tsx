@@ -12,6 +12,7 @@ import handleOpenMap from "../../utility/mapOpen";
 import { useMutation } from "@tanstack/react-query";
 import { appApiCaller } from "../../api/appApiCaller";
 import { formatSlotRange } from "../../utility/formatTime";
+import { useToast } from "../ToastProvider";
 
 interface CourtCardProps {
   courtData: IavailableSlots;
@@ -32,17 +33,20 @@ const CourtSlotBookCard: React.FC<CourtCardProps> = ({
   //   onBookSlot,
 }) => {
   const dispatch = useDispatch();
+   const antToast = useToast();
   const { court, availableSlots } = courtData;
 
   const { mutate, isPending } = useMutation({
     mutationFn: async ({ apiData }: { apiData: IPaymentInitate }) =>
-      await appApiCaller.post(`app/initiate-payment`, apiData),
+      await appApiCaller.post(`app/book-slot`, apiData),
     onSuccess: (response: any) => {
-      const {
-        data: { data },
-      } = response;
-      dispatch(openBookingModal(data));
+      console.log('response', response?.data)
+
+      dispatch(openBookingModal(response?.data?.data));
     },
+    onError:(error:any)=>{
+antToast.error(error?.response?.data?.message || "Failed to book slot");
+    }
   });
 
   //   const booked = courtData.bookedSlots?.[selectedDate] || [];

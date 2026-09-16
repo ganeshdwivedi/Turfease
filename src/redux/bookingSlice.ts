@@ -2,30 +2,46 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { Court, LocationType } from "../Types/Court";
 import type { Dayjs } from "dayjs";
 
-export interface IPaymentInitResponse {
-  court?: {
-    id: string;
-    pricePerHour: number;
-    name: string;
-    address: string;
-    location: LocationType;
+export interface InitiatePaymentResponse {
+
+    order: {
+      id: string;
+      amount: number;
+      amount_due: number;
+      amount_paid: number;
+      currency: string;
+      status: string;
+    };
+
+    totalAmount: number;
+
+    court: {
+      id: string;
+      name: string;
+      address: string;
+
+      location: {
+        state?: string;
+        city?: string;
+        postal_code?: string;
+        latitude?: string | number;
+        longitude?: string | number;
+      };
+
+      pricePerHour: number;
+    };
+
+    booking: {
+      date: string;
+      startTime: string;
+      endTime: string;
+    };
   };
-  booking?: {
-    date: string; // ISO date string, e.g., "2025-10-11"
-    startTime: string; // "HH:mm:ss"
-    endTime: string; // "HH:mm:ss"
-    duration: number; // in hours
-  };
-  pricing?: {
-    basePrice: number; // price before discount
-    discount: number; // discount amount applied
-    totalAmount: number; // final payable amount
-  };
-}
+
 
 interface BookingState {
   isOpen: boolean;
-  data: IPaymentInitResponse | null; // grouped booking data for cleaner access
+  data: InitiatePaymentResponse | null;
 }
 
 const initialState: BookingState = {
@@ -36,7 +52,7 @@ export const bookingSlice = createSlice({
   name: "booking",
   initialState,
   reducers: {
-    openBookingModal: (state, action: PayloadAction<IPaymentInitResponse>) => {
+    openBookingModal: (state, action: PayloadAction<InitiatePaymentResponse>) => {
       state.isOpen = true;
       state.data = action.payload;
     },
