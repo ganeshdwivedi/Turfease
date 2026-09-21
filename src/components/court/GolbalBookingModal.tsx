@@ -175,7 +175,7 @@ const GlobalBookingModal = () => {
     durationInHours;
 
   const totalAmount =
-    (data as any)?.pricing?.totalAmount ??
+    (data as any)?.totalAmount ??
     calculatedTotalAmount;
 
   /**
