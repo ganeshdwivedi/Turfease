@@ -1,6 +1,6 @@
-import React, { Profiler, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { AiOutlineCloudUpload } from "react-icons/ai";
-import { useForm, Controller, useFieldArray } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import {
   Form,
   Input,
@@ -15,10 +15,10 @@ import {
 } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../redux/store";
-import { CourtStatus, type Court, type ICourt } from "../../Types/Court";
+import { CourtStatus, type ICourt } from "../../Types/Court";
 import dayjs from "dayjs";
 import { appApiCaller } from "../../api/appApiCaller";
-import { closeModal, unSelectCourt } from "../../redux/courtSlice";
+import { unSelectCourt } from "../../redux/courtSlice";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiCaller } from "../../api/ApiCaller";
 import AddressAutocomplete from "../../components/select/SelectAdress";
@@ -34,98 +34,42 @@ const CreateCourtModale = () => {
     (state: RootState) => state.court
   );
   const isReadOnly = mode === "view";
+
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
+  const [previewTitle, setPreviewTitle] = useState("");
+
   const {
     control,
-    watch,
-    setValue,
     handleSubmit,
     reset,
     formState: { errors },
   } = useForm<ICourt>({
-    defaultValues: court
-      ? court
-      : {
-          status: CourtStatus.AVAILABLE,
-        },
-  });
-  const { append, update, fields } = useFieldArray({
-    control,
-    name: "other_url",
+    defaultValues: {
+      status: CourtStatus.AVAILABLE,
+      profile_url: [],
+      other_url: [],
+    },
   });
 
   const handleClose = () => {
     dispatch(unSelectCourt({ court: null, mode: "view", isOpen: false }));
   };
 
-  // ============================= handle before upload profile =============================
-  const handleBeforeUploadProfile = async (file: any) => {
-    const formData = new FormData();
-
-    const fileUrl = URL.createObjectURL(file);
-    const tempFile = {
-      uid: file.uid || Date.now().toString(),
-      name: file.name,
-      url: fileUrl,
-      status: "pending" as const,
-    };
-    formData.append("file", file);
-
-    try {
-      const res = await appApiCaller.post("/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+  const handlePreview = async (file: any) => {
+    if (!file.url && !file.preview && file.originFileObj) {
+      file.preview = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file.originFileObj);
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = (error) => reject(error);
       });
-      setValue("profile_url", res.data);
-    } catch (error) {
-      const index = fields.findIndex((f) => f.uid === tempFile.uid);
-      if (index > -1) {
-        setValue("profile_url", { ...tempFile, status: "error" as const });
-      }
-
-      console.error("Upload error:", error);
     }
-
-    return false;
-  };
-
-  // ==================== handle before upload other_img =============================
-  const handleBeforeUpload = async (file: any) => {
-    const formData = new FormData();
-
-    const fileUrl = URL.createObjectURL(file);
-    const tempFile = {
-      uid: file.uid || Date.now().toString(),
-      name: file.name,
-      url: fileUrl,
-      status: "pending" as const,
-    };
-    formData.append("file", file);
-    append(tempFile);
-
-    try {
-      const res = await appApiCaller.post("/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-
-      const uploaded = {
-        ...tempFile,
-        url: res.data.url,
-        status: "success" as const,
-      };
-
-      const index = fields.findIndex((f) => f.uid === tempFile.uid);
-      if (index > -1) {
-        update(index, uploaded);
-      }
-    } catch (error) {
-      const index = fields.findIndex((f) => f.uid === tempFile.uid);
-      if (index > -1) {
-        update(index, { ...tempFile, status: "error" as const });
-      }
-
-      console.error("Upload error:", error);
-    }
-
-    return false; // 🚨 Prevent AntD's default upload
+    setPreviewImage(file.url || file.preview || "");
+    setPreviewOpen(true);
+    setPreviewTitle(
+      file.name || (file.url ? file.url.substring(file.url.lastIndexOf("/") + 1) : "Image Preview")
+    );
   };
 
   const { mutate: createCourt } = useMutation({
@@ -151,25 +95,39 @@ const CreateCourtModale = () => {
     }) => await apiCaller.patch(`/court/${court_id}`, apiData),
     onSuccess: () => {
       handleClose();
-
       queryClient.invalidateQueries({ queryKey: ["GetAllCourts"] });
+    },
+    onError: (error) => {
+      antToast.error("Failed to update court. Please try again.");
+      console.error("Error updating court:", error);
     },
   });
 
-  // ============================= handle submit =============================
-
   const onSubmit = (data: any) => {
-    delete data._id;
+    const payloadData = { ...data };
+    delete payloadData._id;
+
+    let profileImg = payloadData.profile_img || "";
+    if (Array.isArray(payloadData.profile_url) && payloadData.profile_url.length > 0) {
+      const p = payloadData.profile_url[0];
+      profileImg = typeof p === "string" ? p : p.url || p.response?.url || profileImg;
+    }
+
+    const otherImg = (payloadData.other_url || [])
+      .filter(
+        (file: any) =>
+          file && (file.status === "done" || !file.status || file.url)
+      )
+      .map((file: any) => (typeof file === "string" ? file : file.url || file.response?.url))
+      .filter(Boolean);
+
     const payload = {
-      ...(data || {}),
-      profile_img: data?.profile_url?.url || data?.profile_img,
-      other_img: [
-        ...(data?.other_img ?? []),
-        ...(data?.other_url?.map((file: any) =>
-          typeof file === "string" ? file : file.url
-        ) ?? []),
-      ], // ✅ send only URLs
+      ...payloadData,
+      profile_img: profileImg,
+      other_img: otherImg,
     };
+    delete payload.profile_url;
+    delete payload.other_url;
 
     if (court?._id) {
       updateCourt({ apiData: payload, court_id: court._id });
@@ -180,20 +138,42 @@ const CreateCourtModale = () => {
 
   useEffect(() => {
     if (court) {
-      reset(court);
-    } else {
-      reset({ status: CourtStatus.AVAILABLE });
-    }
-  }, [court]);
+      const initialProfileUrl = court.profile_img
+        ? [
+            {
+              uid: "-1",
+              name: "profile.png",
+              status: "done" as const,
+              url: court.profile_img,
+            },
+          ]
+        : [];
 
-  const handlePlaceSelected = (place: any) => {
-    console.log("Selected Place Details:", place);
-  };
+      const initialOtherUrls = Array.isArray(court.other_img)
+        ? court.other_img.map((url: string, index: number) => ({
+            uid: `existing-other-${index}`,
+            name: `image-${index + 1}.png`,
+            status: "done" as const,
+            url: url,
+          }))
+        : [];
+
+      reset({
+        ...court,
+        profile_url: initialProfileUrl,
+        other_url: initialOtherUrls,
+      });
+    } else {
+      reset({
+        status: CourtStatus.AVAILABLE,
+        profile_url: [],
+        other_url: [],
+      });
+    }
+  }, [court, reset, isOpen]);
 
   useEffect(() => {
     if ((window as any).umami) {
-      console.log("umami loaded---");
-
       if (!court) {
         (window as any).umami.track("Court Create");
       } else {
@@ -208,296 +188,361 @@ const CreateCourtModale = () => {
     }
   }, [court]);
 
-  console.log(watch(), "wathchhh");
-
   return (
-    <Modal
-      title="Create New Court"
-      open={isOpen}
-      closable
-      footer={null}
-      centered
-      onCancel={handleClose}
-    >
-      <Form layout="vertical" onFinish={handleSubmit(onSubmit)}>
-        {/* Court Name */}
-        <Form.Item
-          label="Court Name"
-          validateStatus={errors.courtName ? "error" : ""}
-          help={errors.courtName?.message}
-        >
-          <Controller
-            name="courtName"
-            control={control}
-            rules={{ required: "Court Name is required" }}
-            render={({ field }) => (
-              <Input
-                disabled={isReadOnly}
-                {...field}
-                placeholder="Enter court name"
-              />
-            )}
-          />
-        </Form.Item>
-
-        {/* Address */}
-
-        {/* <StateCitySelector control={control} name="location" setValue={setValue} watch={watch} /> */}
-
-        {/* Location */}
-        {/* <Row gutter={24}>
-          <Col span={12}>
-            <Form.Item
-              label="State"
-              validateStatus={errors.location?.state ? "error" : ""}
-              help={errors.location?.state?.message}
-            >
-              <Controller
-                disabled={isReadOnly}
-                name="location.state"
-                control={control}
-                rules={{ required: "State is required" }}
-                render={({ field }) => (
-                  <Input {...field} placeholder="Enter state" />
-                )}
-              />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item
-              label="City"
-              validateStatus={errors.location?.city ? "error" : ""}
-              help={errors.location?.city?.message}
-            >
-              <Controller
-                disabled={isReadOnly}
-                name="location.city"
-                control={control}
-                rules={{ required: "City is required" }}
-                render={({ field }) => (
-                  <Input {...field} placeholder="Enter city" />
-                )}
-              />
-            </Form.Item>
-          </Col>
-        </Row> */}
-
-        <Row gutter={24}>
-          <Col span={12}>
-            {/* Sports Available */}
-            <Form.Item label="Sports Available">
-              <Controller
-                disabled={isReadOnly}
-                name="sportsAvailable"
-                control={control}
-                render={({ field }) => (
-                  <Select {...field} mode="tags" placeholder="Enter sports">
-                    <Option value="Football">Football</Option>
-                    <Option value="Badminton">Badminton</Option>
-                    <Option value="Tennis">Tennis</Option>
-                  </Select>
-                )}
-              />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            {/* Contact Number */}
-            <Form.Item
-              label="Contact Number"
-              validateStatus={errors.contactNumber ? "error" : ""}
-              help={errors.contactNumber?.message}
-            >
-              <Controller
-                disabled={isReadOnly}
-                name="contactNumber"
-                control={control}
-                rules={{ required: "Contact number is required" }}
-                render={({ field }) => (
-                  <Input {...field} placeholder="Enter contact number" />
-                )}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-
-        <Row>
-          <Col span={12}>
-            {/* Profile Image */}
-            <Form.Item label="Profile Image">
-              <Upload
-                disabled={isReadOnly}
-                maxCount={1}
-                beforeUpload={handleBeforeUploadProfile}
-              >
-                <Button icon={<AiOutlineCloudUpload />}>
-                  Upload Profile Image
-                </Button>
-              </Upload>
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            {/* Other Images */}
-            <Form.Item label="Other Images">
-              <Upload
-                disabled={isReadOnly}
-                multiple
-                beforeUpload={handleBeforeUpload}
-              >
-                <Button icon={<AiOutlineCloudUpload />}>
-                  Upload Other Images
-                </Button>
-              </Upload>
-            </Form.Item>
-          </Col>
-        </Row>
-
-        <Row gutter={24}>
-          <Col span={12}>
-            <Form.Item label="Status">
-              <Controller
-                disabled={isReadOnly}
-                name="status"
-                control={control}
-                render={({ field }) => (
-                  <Select {...field} defaultValue="Available">
-                    <Option value="Available">Available</Option>
-                    <Option value="Unavailable">Unavailable</Option>
-                    <Option value="Maintenance">Maintenance</Option>
-                  </Select>
-                )}
-              />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            {/* Price per Hour */}
-            <Form.Item
-              label="Price per Hour"
-              validateStatus={errors.pricePerHour ? "error" : ""}
-              help={errors.pricePerHour?.message}
-            >
-              <Controller
-                disabled={isReadOnly}
-                name="pricePerHour"
-                control={control}
-                rules={{ required: "Price per hour is required" }}
-                render={({ field }) => (
-                  <InputNumber
-                    {...field}
-                    style={{ width: "100%" }}
-                    placeholder="Enter price"
-                    min={0}
-                  />
-                )}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-        {/* Status */}
-
-        {/* Working Hours */}
-        <Row gutter={24}>
-          <Col span={12}>
+    <>
+      <Modal
+        title={court ? (isReadOnly ? "View Court" : "Edit Court") : "Create New Court"}
+        open={isOpen}
+        closable
+        footer={null}
+        centered
+        onCancel={handleClose}
+      >
+        <Form layout="vertical" onFinish={handleSubmit(onSubmit)}>
+          {/* Court Name */}
+          <Form.Item
+            label="Court Name"
+            validateStatus={errors.courtName ? "error" : ""}
+            help={errors.courtName?.message}
+          >
             <Controller
-              disabled={isReadOnly}
-              name="workingHours.start"
+              name="courtName"
               control={control}
-              rules={{ required: "Start time is required" }}
-              render={({
-                field: { onChange, value, ref, ...rest },
-                fieldState: { error },
-              }) => (
-                <Form.Item
-                  label="Start Time"
-                  validateStatus={error ? "error" : ""}
-                  help={error?.message}
-                >
-                  <TimePicker
-                    className="!w-full"
-                    {...rest}
-                    minuteStep={30}
-                    ref={ref}
-                    format="HH:mm a"
-                    value={value ? dayjs(value, "HH:mm") : null}
-                    onChange={(time) =>
-                      onChange(time ? time.format("HH:mm") : null)
-                    }
-                  />
-                </Form.Item>
+              rules={{ required: "Court Name is required" }}
+              render={({ field }) => (
+                <Input
+                  disabled={isReadOnly}
+                  {...field}
+                  placeholder="Enter court name"
+                />
               )}
             />
-          </Col>
-          <Col span={12}>
-            <Controller
-              disabled={isReadOnly}
-              name="workingHours.end"
-              control={control}
-              rules={{ required: "End time is required" }}
-              render={({
-                field: { onChange, value, ref, ...rest },
-                fieldState: { error },
-              }) => (
-                <Form.Item
-                  label="End Time"
-                  validateStatus={error ? "error" : ""}
-                  help={error?.message}
-                >
-                  <TimePicker
-                    className="!w-full"
-                    minuteStep={30}
-                    {...rest}
-                    ref={ref}
-                    format="HH:mm a"
-                    value={value ? dayjs(value, "HH:mm") : null} // ✅ convert string → Dayjs
-                    onChange={(time) =>
-                      onChange(time ? time.format("HH:mm") : null)
-                    } // ✅ convert Dayjs → string
-                  />
-                </Form.Item>
-              )}
-            />
-          </Col>
-        </Row>
+          </Form.Item>
 
-        <Form.Item
-          label="Address"
-          validateStatus={errors.address ? "error" : ""}
-          help={errors.address?.message}
-        >
-          <Controller
-            disabled={isReadOnly}
-            name="address"
-            control={control}
-            rules={{ required: "Address is required" }}
-            render={({ field }) => (
-              <Input.TextArea {...field} placeholder="Enter address" />
-            )}
-          />
-        </Form.Item>
-
-        <Col>
-          <Controller
-            control={control}
-            name="location"
-            render={({ field: { onChange, value } }) => (
-              <Form.Item label="Select Location">
-                <AddressAutocomplete
-                  value={value}
-                  onPlaceSelected={(data: any) => onChange(data)}
+          <Row gutter={24}>
+            <Col span={12}>
+              {/* Sports Available */}
+              <Form.Item label="Sports Available">
+                <Controller
+                  disabled={isReadOnly}
+                  name="sportsAvailable"
+                  control={control}
+                  render={({ field }) => (
+                    <Select {...field} mode="tags" placeholder="Enter sports">
+                      <Option value="Football">Football</Option>
+                      <Option value="Badminton">Badminton</Option>
+                      <Option value="Tennis">Tennis</Option>
+                    </Select>
+                  )}
                 />
               </Form.Item>
-            )}
-          />
-        </Col>
+            </Col>
+            <Col span={12}>
+              {/* Contact Number */}
+              <Form.Item
+                label="Contact Number"
+                validateStatus={errors.contactNumber ? "error" : ""}
+                help={errors.contactNumber?.message}
+              >
+                <Controller
+                  disabled={isReadOnly}
+                  name="contactNumber"
+                  control={control}
+                  rules={{ required: "Contact number is required" }}
+                  render={({ field }) => (
+                    <Input {...field} placeholder="Enter contact number" />
+                  )}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
 
-        {/* Submit Button */}
-        <Form.Item>
-          <Button type="primary" htmlType="submit">
-            Submit Court
-          </Button>
-        </Form.Item>
-      </Form>
-    </Modal>
+          <Row gutter={24}>
+            <Col span={12}>
+              {/* Profile Image */}
+              <Form.Item label="Profile Image">
+                <Controller
+                  name="profile_url"
+                  control={control}
+                  render={({ field: { value = [], onChange } }) => (
+                    <Upload
+                      disabled={isReadOnly}
+                      listType="picture-card"
+                      maxCount={1}
+                      fileList={Array.isArray(value) ? value : []}
+                      onPreview={handlePreview}
+                      onRemove={() => {
+                        onChange([]);
+                      }}
+                      beforeUpload={async (file) => {
+                        const formData = new FormData();
+                        const fileUrl = URL.createObjectURL(file);
+                        const tempFile = {
+                          uid: file.uid || Date.now().toString(),
+                          name: file.name,
+                          url: fileUrl,
+                          status: "uploading" as const,
+                        };
+                        onChange([tempFile]);
+
+                        formData.append("file", file);
+                        try {
+                          const res = await appApiCaller.post("/upload", formData, {
+                            headers: { "Content-Type": "multipart/form-data" },
+                          });
+                          const uploadedUrl = res.data?.url || res.data;
+                          const uploadedFile = {
+                            ...tempFile,
+                            url: uploadedUrl,
+                            status: "done" as const,
+                          };
+                          onChange([uploadedFile]);
+                        } catch (error) {
+                          antToast.error("Failed to upload profile image");
+                          onChange([{ ...tempFile, status: "error" as const }]);
+                        }
+                        return false;
+                      }}
+                    >
+                      {(Array.isArray(value) && value.length >= 1) || isReadOnly ? null : (
+                        <div className="flex flex-col items-center justify-center">
+                          <AiOutlineCloudUpload className="text-2xl" />
+                          <div className="mt-1 text-xs">Upload</div>
+                        </div>
+                      )}
+                    </Upload>
+                  )}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              {/* Other Images */}
+              <Form.Item label="Other Images">
+                <Controller
+                  name="other_url"
+                  control={control}
+                  render={({ field: { value = [], onChange } }) => (
+                    <Upload
+                      disabled={isReadOnly}
+                      listType="picture-card"
+                      multiple
+                      fileList={Array.isArray(value) ? value : []}
+                      onPreview={handlePreview}
+                      onRemove={(file) => {
+                        const updated = (Array.isArray(value) ? value : []).filter(
+                          (item: any) => item.uid !== file.uid
+                        );
+                        onChange(updated);
+                      }}
+                      beforeUpload={async (file) => {
+                        const formData = new FormData();
+                        const fileUrl = URL.createObjectURL(file);
+                        const tempFile = {
+                          uid: file.uid || `${Date.now()}-${Math.random()}`,
+                          name: file.name,
+                          url: fileUrl,
+                          status: "uploading" as const,
+                        };
+                        const currentList = Array.isArray(value) ? value : [];
+                        const newList = [...currentList, tempFile];
+                        onChange(newList);
+
+                        formData.append("file", file);
+                        try {
+                          const res = await appApiCaller.post("/upload", formData, {
+                            headers: { "Content-Type": "multipart/form-data" },
+                          });
+                          const uploadedUrl = res.data?.url || res.data;
+                          const updated = newList.map((f: any) =>
+                            f.uid === tempFile.uid
+                              ? { ...f, url: uploadedUrl, status: "done" as const }
+                              : f
+                          );
+                          onChange(updated);
+                        } catch (error) {
+                          antToast.error("Failed to upload image");
+                          const updated = newList.map((f: any) =>
+                            f.uid === tempFile.uid
+                              ? { ...f, status: "error" as const }
+                              : f
+                          );
+                          onChange(updated);
+                        }
+                        return false;
+                      }}
+                    >
+                      {isReadOnly ? null : (
+                        <div className="flex flex-col items-center justify-center">
+                          <AiOutlineCloudUpload className="text-2xl" />
+                          <div className="mt-1 text-xs">Upload</div>
+                        </div>
+                      )}
+                    </Upload>
+                  )}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Row gutter={24}>
+            <Col span={12}>
+              <Form.Item label="Status">
+                <Controller
+                  disabled={isReadOnly}
+                  name="status"
+                  control={control}
+                  render={({ field }) => (
+                    <Select {...field} defaultValue="Available">
+                      <Option value="Available">Available</Option>
+                      <Option value="Unavailable">Unavailable</Option>
+                      <Option value="Maintenance">Maintenance</Option>
+                    </Select>
+                  )}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              {/* Price per Hour */}
+              <Form.Item
+                label="Price per Hour"
+                validateStatus={errors.pricePerHour ? "error" : ""}
+                help={errors.pricePerHour?.message}
+              >
+                <Controller
+                  disabled={isReadOnly}
+                  name="pricePerHour"
+                  control={control}
+                  rules={{ required: "Price per hour is required" }}
+                  render={({ field }) => (
+                    <InputNumber
+                      {...field}
+                      style={{ width: "100%" }}
+                      placeholder="Enter price"
+                      min={0}
+                    />
+                  )}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          {/* Working Hours */}
+          <Row gutter={24}>
+            <Col span={12}>
+              <Controller
+                disabled={isReadOnly}
+                name="workingHours.start"
+                control={control}
+                rules={{ required: "Start time is required" }}
+                render={({
+                  field: { onChange, value, ref, ...rest },
+                  fieldState: { error },
+                }) => (
+                  <Form.Item
+                    label="Start Time"
+                    validateStatus={error ? "error" : ""}
+                    help={error?.message}
+                  >
+                    <TimePicker
+                      className="!w-full"
+                      {...rest}
+                      minuteStep={30}
+                      ref={ref}
+                      format="HH:mm a"
+                      value={value ? dayjs(value, "HH:mm") : null}
+                      onChange={(time) =>
+                        onChange(time ? time.format("HH:mm") : null)
+                      }
+                    />
+                  </Form.Item>
+                )}
+              />
+            </Col>
+            <Col span={12}>
+              <Controller
+                disabled={isReadOnly}
+                name="workingHours.end"
+                control={control}
+                rules={{ required: "End time is required" }}
+                render={({
+                  field: { onChange, value, ref, ...rest },
+                  fieldState: { error },
+                }) => (
+                  <Form.Item
+                    label="End Time"
+                    validateStatus={error ? "error" : ""}
+                    help={error?.message}
+                  >
+                    <TimePicker
+                      className="!w-full"
+                      minuteStep={30}
+                      {...rest}
+                      ref={ref}
+                      format="HH:mm a"
+                      value={value ? dayjs(value, "HH:mm") : null}
+                      onChange={(time) =>
+                        onChange(time ? time.format("HH:mm") : null)
+                      }
+                    />
+                  </Form.Item>
+                )}
+              />
+            </Col>
+          </Row>
+
+          <Form.Item
+            label="Address"
+            validateStatus={errors.address ? "error" : ""}
+            help={errors.address?.message}
+          >
+            <Controller
+              disabled={isReadOnly}
+              name="address"
+              control={control}
+              rules={{ required: "Address is required" }}
+              render={({ field }) => (
+                <Input.TextArea {...field} placeholder="Enter address" />
+              )}
+            />
+          </Form.Item>
+
+          <Col>
+            <Controller
+              control={control}
+              name="location"
+              render={({ field: { onChange, value } }) => (
+                <Form.Item label="Select Location">
+                  <AddressAutocomplete
+                    value={value}
+                    onPlaceSelected={(data: any) => onChange(data)}
+                  />
+                </Form.Item>
+              )}
+            />
+          </Col>
+
+          {/* Submit Button */}
+          {!isReadOnly && (
+            <Form.Item>
+              <Button type="primary" htmlType="submit">
+                Submit Court
+              </Button>
+            </Form.Item>
+          )}
+        </Form>
+      </Modal>
+
+      <Modal
+        open={previewOpen}
+        title={previewTitle}
+        footer={null}
+        onCancel={() => setPreviewOpen(false)}
+      >
+        <img alt="preview" style={{ width: "100%" }} src={previewImage} />
+      </Modal>
+    </>
   );
 };
 
 export default CreateCourtModale;
+

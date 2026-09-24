@@ -1,5 +1,5 @@
 import moment from "moment";
-import React, { useEffect } from "react";
+import React, { useEffect, useEffectEvent } from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
   Modal,
@@ -10,12 +10,18 @@ import {
   Row,
   Col,
   TimePicker,
+  Card,
+  Spin,
+  Typography,
 } from "antd";
 import dayjs from "dayjs";
 import type { ICreateBooking } from "../../Types/Booking";
 import { useCreateBooking } from "../../api/Calendar";
 import { CustomerSearchSelect } from "../../components/Search/CustomerSearch";
-
+import { useQuery } from "@tanstack/react-query";
+import { apiCaller } from "../../api/ApiCaller";
+import { FaIndianRupeeSign } from "react-icons/fa6";
+const { Text } = Typography;
 const CreateBookingModal = ({
   isOpen,
   onOpenChange,
@@ -58,6 +64,30 @@ const CreateBookingModal = ({
       },
     });
   };
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey: [
+      "booking-price",
+      {
+        startTime,
+        endTime,
+        court: event?.resourceId,
+      },
+    ],
+
+    queryFn: async () => {
+      const response = await apiCaller.post("/booking/initiateBooking", {
+        startTime,
+        endTime,
+        court: event?.resourceId,
+      });
+
+      return response?.data?.data;
+    },
+
+    enabled: !!event?.resourceId && !!startTime && !!endTime,
+    staleTime: 60 * 1000,
+  });
 
   return (
     <Modal
@@ -131,7 +161,86 @@ const CreateBookingModal = ({
 
         {/* Price */}
         <Form.Item label="Booking Price">
-          <p>null</p>
+          <Card
+            size="small"
+            style={{
+              background: "#f8f9fc",
+              border: "1px solid #e5e7eb",
+              borderRadius: 8,
+            }}
+            styles={{
+              body: {
+                padding: "14px 16px",
+              },
+            }}
+          >
+            {isPending ? (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  minHeight: 40,
+                }}
+              >
+                <Spin size="small" />
+
+                <Text type="secondary">Calculating booking price...</Text>
+              </div>
+            ) : (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 10,
+                  }}
+                >
+                  <div
+                    style={{
+                      width: 36,
+                      height: 36,
+                      borderRadius: 8,
+                      background: "#f0f2ff",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <FaIndianRupeeSign />
+                  </div>
+
+                  <div>
+                    <Text
+                      type="secondary"
+                      style={{
+                        display: "block",
+                        fontSize: 12,
+                      }}
+                    >
+                      Total Booking Price
+                    </Text>
+
+                    <Text
+                      strong
+                      style={{
+                        fontSize: 20,
+                        color: "#1f2937",
+                      }}
+                    >
+                      ₹{data ?? 0}
+                    </Text>
+                  </div>
+                </div>
+              </div>
+            )}
+          </Card>
         </Form.Item>
 
         {/* Customer */}
