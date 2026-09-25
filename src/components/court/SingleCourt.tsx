@@ -53,9 +53,8 @@ const SingleCourt = ({ court }: { court: Court }) => {
                 )
               }
               icon={
-                <Link target="_blank" to={court.address}>
+              
                   <FaExternalLinkAlt />
-                </Link>
               }
             />
             <Button

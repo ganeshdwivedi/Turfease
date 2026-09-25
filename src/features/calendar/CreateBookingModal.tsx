@@ -26,10 +26,13 @@ const CreateBookingModal = ({
   isOpen,
   onOpenChange,
   event,
+  defaultValue
+
 }: {
   isOpen: boolean;
   onOpenChange: (val: boolean) => void;
   event: any;
+  defaultValue?:any
 }) => {
   const { mutateAsync: CreateBooking, isPending } = useCreateBooking();
   const {
@@ -38,6 +41,7 @@ const CreateBookingModal = ({
     formState: { errors },
     watch,
     reset,
+    getValues
   } = useForm<ICreateBooking>({
     defaultValues: {
       startTime: dayjs(event?.start).format("HH:mm:ss"),
@@ -65,7 +69,7 @@ const CreateBookingModal = ({
     });
   };
 
-  const { data, isLoading, isError } = useQuery({
+  const { data } = useQuery({
     queryKey: [
       "booking-price",
       {
@@ -89,8 +93,38 @@ const CreateBookingModal = ({
     staleTime: 60 * 1000,
   });
 
+    const { data:bookingData, isLoading:isBookingLoading, } = useQuery({
+    queryKey: [
+      "Booking-info",defaultValue?._id,],
+
+    queryFn: async () => {
+      const response = await apiCaller.get(`/booking/${defaultValue?._id}`);
+      return response?.data?.data;
+    },
+
+    enabled: !!defaultValue?._id,
+    staleTime: 60 * 1000,
+  });
+
+  useEffect(() => {
+  if (!isOpen || !bookingData || !defaultValue) return;
+
+  reset({
+    sport: bookingData.sport,
+    customer: bookingData.customer?._id,
+    court: bookingData.court?._id,
+    bookingDate: bookingData.bookingDate,
+    startTime: bookingData.startTime,
+    endTime: bookingData.endTime,
+    payment: bookingData.payment,
+  });
+}, [isOpen, bookingData, reset]);
+
+  console.log(bookingData,'booking')
+
   return (
     <Modal
+     title="Create Booking"
       closable
       open={isOpen}
       footer={null}
@@ -234,7 +268,7 @@ const CreateBookingModal = ({
                         color: "#1f2937",
                       }}
                     >
-                      ₹{data ?? 0}
+                    ₹{watch('payment.totalAmount') ?? data ?? 0}
                     </Text>
                   </div>
                 </div>

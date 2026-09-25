@@ -63,6 +63,7 @@ export default function CalendarPage() {
   const [visibleCourts, setVisibleCourts] = useState([0, 4]);
   const [event, setEvent] = useState(null);
   const [search, setSearch] = useState(""); // customer search in create modal
+  const [defaultValue,setDefaultValue]=useState<any>();
   const {
     isSuccess,
     data: BookingData,
@@ -96,6 +97,7 @@ export default function CalendarPage() {
   const handleClickOpen = (newEvent: any) => {
     setIsModalOpen(true);
     setEvent(newEvent);
+    setDefaultValue(null)
   };
 
   const eventPropGetter = useCallback((event: any, start: any, end: any) => {
@@ -134,8 +136,12 @@ export default function CalendarPage() {
     };
   }, []);
 
-  const handleEvent = (events: any) => {
-    console.log(events, "eventntntnntntnt----");
+
+  const handleEvent = (event: any) => {
+    setDefaultValue(event);
+    setIsModalOpen(true);
+    setEvent(null);
+
   };
 
   // for showing the active line only if current day
@@ -355,6 +361,7 @@ export default function CalendarPage() {
 
         {isModalOpen && (
           <CreateBookingModal
+            defaultValue={defaultValue}
             event={event}
             isOpen={isModalOpen}
             onOpenChange={() => setIsModalOpen(false)}
