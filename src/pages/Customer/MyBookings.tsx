@@ -23,14 +23,10 @@ const MyBookings = () => {
       <h3 className="font-bold mb-5 !text-2xl !text-[#508267]">My Bookings</h3>
       <div className="flex flex-col gap-5">
         {data?.map((item: any) => (
-          <div
-            onClick={() => {
+            <BookingCard key={item?._id} callback={()=>{
               setBooking(item);
               setIsOpen(true);
-            }}
-          >
-            <BookingCard booking={item} />
-          </div>
+            }} booking={item} />
         ))}
       </div>
       <BookingInfoModal

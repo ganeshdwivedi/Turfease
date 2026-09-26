@@ -19,6 +19,7 @@ import CustomerSigin from "../pages/Customer/CustomerSignIn";
 import CustomerMainPage from "../pages/Customer/CustomerMainPage";
 import Book from "../pages/Customer/Book";
 import MyBookings from "../pages/Customer/MyBookings";
+import Coupons from "../pages/Coupons";
 // import { RootState } from "../redux/store";
 
 const RequireAuth: React.FC<any> = ({ children }) => {
@@ -92,6 +93,7 @@ const router = createBrowserRouter([
       { path: "courts", element: <Court /> },
       { path: "payments", element: <Payments /> },
       { path: "customers", element: <Customer /> },
+      { path: "coupons", element: <Coupons /> },
       { path: "plans", element: <Plans /> },
       {
         path: "settings",

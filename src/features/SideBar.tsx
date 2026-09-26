@@ -4,6 +4,7 @@ import { CiDollar } from "react-icons/ci";
 import { IoSettingsSharp } from "react-icons/io5";
 import { GoSignOut } from "react-icons/go";
 import { PiCourtBasketballLight } from "react-icons/pi";
+import { RiCoupon2Line } from "react-icons/ri";
 
 export const sidebarItems = [
   {
@@ -29,6 +30,12 @@ export const sidebarItems = [
     path: "/club/customers",
     icon: <LuUser className="!text-xl" />,
     label: "Customers",
+  },
+   {
+    key: "coupons",
+    path: "/club/coupons",
+    icon: <RiCoupon2Line  className="!text-xl" />,
+    label: "Coupons",
   },
   {
     key: "settings",

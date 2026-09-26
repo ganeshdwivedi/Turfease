@@ -7,6 +7,7 @@ const breadcrumbNameMap: Record<string, string> = {
   "/courts": "Courts",
   "/payments": "Payments",
   "/customers": "Customers",
+    "/coupons": "Coupons",
   "/settings": "Settings",
   "/logout": "Logout",
   "/subscription": "Subscription",
